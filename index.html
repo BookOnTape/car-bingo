@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎉 Road Trip Bingo Maker</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1E293B;--muted:#64748B;--radius:18px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#F0F9FF;color:var(--ink);min-height:100vh;padding-bottom:60px}
+.hero{background:linear-gradient(135deg,#1E293B 0%,#0F4C81 100%);padding:36px 20px 32px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'🚗 🚙 🛻 🚕 🚌 🏎️';position:absolute;top:8px;left:0;right:0;font-size:1.4rem;letter-spacing:12px;opacity:.15;white-space:nowrap;overflow:hidden}
+.hero h1{font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3rem);color:#FDE68A;text-shadow:3px 3px 0 rgba(0,0,0,.3);position:relative}
+.hero p{color:#BAE6FD;font-size:.95rem;font-weight:700;margin-top:6px;position:relative}
+.main{max-width:680px;margin:0 auto;padding:28px 16px 0}
+.card{background:#fff;border-radius:var(--radius);padding:22px;margin-bottom:18px;box-shadow:0 2px 12px rgba(0,0,0,.07),0 1px 0 #E2E8F0;border:2px solid #E2E8F0}
+.card-title{font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.category-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.cat-btn{border:2.5px solid #E2E8F0;border-radius:14px;padding:12px 8px;background:#F8FAFF;cursor:pointer;text-align:center;transition:all .15s;font-family:'Nunito',sans-serif;font-weight:800;font-size:.82rem;color:#475569;position:relative}
+.cat-btn .cat-emoji{font-size:1.8rem;display:block;margin-bottom:4px}
+.cat-btn:hover{border-color:#7DD3FC;background:#F0F9FF}
+.cat-btn.active{border-color:#3B82F6;background:#EFF6FF;color:#1D4ED8;box-shadow:0 0 0 3px #BFDBFE}
+.cat-check{position:absolute;top:6px;right:8px;font-size:.75rem;color:#3B82F6;display:none}
+.cat-btn.active .cat-check{display:block}
+.item-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.item-row{display:grid;gap:8px;align-items:center}
+.item-row.favicon-row{grid-template-columns:1fr 1fr auto}
+.item-row.emoji-row{grid-template-columns:52px 1fr auto}
+.item-input{font-family:'Nunito',sans-serif;font-weight:700;font-size:.9rem;padding:8px 12px;border:2px solid #E2E8F0;border-radius:10px;outline:none;width:100%;transition:border-color .15s;background:#FAFAFA}
+.item-input:focus{border-color:#7DD3FC;background:white}
+.item-emoji{text-align:center;font-size:1.3rem;padding:5px 4px}
+.del-btn{width:32px;height:32px;background:#FEE2E2;border:none;border-radius:8px;color:#DC2626;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s}
+.del-btn:hover{background:#FECACA}
+.add-item-btn{width:100%;background:#F0FDF4;border:2px dashed #4ADE80;color:#15803D;border-radius:10px;padding:9px;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;transition:background .12s}
+.add-item-btn:hover{background:#DCFCE7}
+.item-hint{font-size:.8rem;color:var(--muted);margin-bottom:10px;line-height:1.5;background:#F8FAFF;border-radius:10px;padding:10px 12px;border:1.5px solid #E2E8F0}
+.col-headers{display:grid;gap:8px;margin-bottom:4px}
+.col-headers.favicon-headers{grid-template-columns:1fr 1fr auto}
+.col-headers.emoji-headers{grid-template-columns:52px 1fr auto}
+.col-header{font-size:.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:0 2px}
+.count-badge{display:inline-block;border-radius:99px;padding:2px 10px;font-size:.78rem;font-weight:800;margin-left:8px;vertical-align:middle}
+.count-badge.ok{background:#DBEAFE;color:#1D4ED8}
+.count-badge.warn{background:#FEE2E2;color:#DC2626}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt-label{font-size:.82rem;font-weight:800;color:var(--muted);margin-bottom:5px;display:block}
+.opt-input{width:100%;padding:8px 12px;border:2px solid #E2E8F0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;outline:none;transition:border-color .15s;background:#FAFAFA}
+.opt-input:focus{border-color:#7DD3FC;background:white}
+.build-section{text-align:center}
+.build-btn{font-family:'Fredoka One',cursive;font-size:1.2rem;padding:16px 48px;background:linear-gradient(135deg,#F97316,#EF4444);color:white;border:none;border-radius:50px;cursor:pointer;box-shadow:0 5px 0 #B91C1C,0 8px 20px rgba(239,68,68,.3);transition:transform .12s,box-shadow .12s;letter-spacing:.5px}
+.build-btn:hover{transform:translateY(-2px)}
+.build-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #B91C1C}
+.build-btn:disabled{background:#94A3B8;box-shadow:0 5px 0 #64748B;transform:none;cursor:default}
+.progress-wrap{display:none;margin-top:18px}
+.bar-bg{background:#E2E8F0;border-radius:99px;height:14px;overflow:hidden;margin-bottom:8px}
+.bar-fill{background:linear-gradient(90deg,#22C55E,#16A34A);height:100%;border-radius:99px;width:0%;transition:width .3s}
+.prog-status{font-size:.88rem;font-weight:700;color:var(--muted);text-align:center}
+.done-section{display:none;margin-top:18px;background:#F0FDF4;border:2px solid #4ADE80;border-radius:var(--radius);padding:20px 22px;text-align:center}
+.done-section h2{font-family:'Fredoka One',cursive;color:#15803D;font-size:1.3rem;margin-bottom:6px}
+.done-section p{color:#166534;font-size:.88rem;margin-bottom:14px}
+.download-btn{display:inline-block;font-family:'Fredoka One',cursive;font-size:1.05rem;padding:12px 32px;background:#16A34A;color:white;border-radius:50px;text-decoration:none;box-shadow:0 4px 0 #166534;transition:transform .12s}
+.download-btn:hover{transform:translateY(-2px)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🎉 Road Trip Bingo Maker</h1>
+  <p>Pick a category · Customize items · Build your offline game!</p>
+</div>
+
+<div class="main">
+
+  <div class="card">
+    <div class="card-title">1️⃣ Choose a Category</div>
+    <div class="category-grid" id="categoryGrid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      2️⃣ Edit Your Items
+      <span class="count-badge" id="countBadge">0 items</span>
+    </div>
+    <div class="item-hint" id="itemHint"></div>
+    <div class="col-headers" id="colHeaders"></div>
+    <div class="item-list" id="itemList"></div>
+    <button class="add-item-btn" onclick="addItem()">+ Add Item</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">3️⃣ Options</div>
+    <div class="options-grid">
+      <div>
+        <label class="opt-label">Game Title</label>
+        <input class="opt-input" id="gameTitle" value="Road Trip Bingo!">
+      </div>
+      <div>
+        <label class="opt-label">Free Space Label</label>
+        <input class="opt-input" id="freeLabel" value="FREE!">
+      </div>
+    </div>
+  </div>
+
+  <div class="build-section">
+    <button class="build-btn" id="buildBtn" onclick="buildGame()">🚀 Build My Bingo Game!</button>
+    <div class="progress-wrap" id="progressWrap">
+      <div class="bar-bg"><div class="bar-fill" id="barFill"></div></div>
+      <div class="prog-status" id="progStatus">Starting…</div>
+    </div>
+    <div class="done-section" id="doneSection">
+      <h2>🎉 Your game is ready!</h2>
+      <p>Save the file — open it any time in any browser, no internet needed.<br>
+         Use <strong>New Board</strong> to scramble and <strong>Print Board</strong> for paper play!</p>
+      <a class="download-btn" id="dlLink" href="#" download="bingo-game.html">💾 Save Bingo Game</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CATS = [
+  {
+    id:'cars', label:'Car Brands', emoji:'🚗', bg:'road', type:'favicon',
+    hint:'Enter each brand\'s website domain — the maker fetches its logo automatically when you click Build.',
+    cols:['Website Domain','Brand Name'],
+    items:[
+      {value:'toyota.com',        label:'Toyota'},
+      {value:'honda.com',         label:'Honda'},
+      {value:'ford.com',          label:'Ford'},
+      {value:'chevrolet.com',     label:'Chevy'},
+      {value:'dodge.com',         label:'Dodge'},
+      {value:'jeep.com',          label:'Jeep'},
+      {value:'nissanusa.com',     label:'Nissan'},
+      {value:'hyundaiusa.com',    label:'Hyundai'},
+      {value:'kia.com',           label:'Kia'},
+      {value:'subaru.com',        label:'Subaru'},
+      {value:'bmwusa.com',        label:'BMW'},
+      {value:'tesla.com',         label:'Tesla'},
+      {value:'buick.com',         label:'Buick'},
+      {value:'gmc.com',           label:'GMC'},
+      {value:'mazdausa.com',      label:'Mazda'},
+      {value:'vw.com',            label:'VW'},
+      {value:'volvocars.com',     label:'Volvo'},
+      {value:'audiusa.com',       label:'Audi'},
+      {value:'lexus.com',         label:'Lexus'},
+      {value:'acura.com',         label:'Acura'},
+      {value:'mbusa.com',         label:'Mercedes'},
+      {value:'porsche.com',       label:'Porsche'},
+      {value:'mitsubishicars.com',label:'Mitsubishi'},
+      {value:'lincoln.com',       label:'Lincoln'},
+      {value:'infinitiusa.com',   label:'Infiniti'},
+      {value:'cadillac.com',      label:'Cadillac'},
+      {value:'ramtrucks.com',     label:'Ram'},
+      {value:'chrysler.com',      label:'Chrysler'},
+    ]
+  },
+  {
+    id:'stores', label:'Store Signs', emoji:'🛒', bg:'city', type:'favicon',
+    hint:'Enter the store\'s website domain. The maker fetches its logo when you click Build.',
+    cols:['Website Domain','Store Name'],
+    items:[
+      {value:'target.com',          label:'Target'},
+      {value:'walmart.com',         label:'Walmart'},
+      {value:'costco.com',          label:'Costco'},
+      {value:'homedepot.com',       label:'Home Depot'},
+      {value:'lowes.com',           label:"Lowe's"},
+      {value:'cvs.com',             label:'CVS'},
+      {value:'walgreens.com',       label:'Walgreens'},
+      {value:'starbucks.com',       label:'Starbucks'},
+      {value:'mcdonalds.com',       label:"McDonald's"},
+      {value:'chick-fil-a.com',     label:'Chick-fil-A'},
+      {value:'subway.com',          label:'Subway'},
+      {value:'dunkindonuts.com',    label:"Dunkin'"},
+      {value:'wendys.com',          label:"Wendy's"},
+      {value:'bk.com',              label:'Burger King'},
+      {value:'tacobell.com',        label:'Taco Bell'},
+      {value:'pizzahut.com',        label:'Pizza Hut'},
+      {value:'dominos.com',         label:"Domino's"},
+      {value:'hobbylobby.com',      label:'Hobby Lobby'},
+      {value:'dollartree.com',      label:'Dollar Tree'},
+      {value:'bestbuy.com',         label:'Best Buy'},
+      {value:'tjmaxx.com',          label:'TJ Maxx'},
+      {value:'aldi.us',             label:'Aldi'},
+      {value:'traderjoes.com',      label:"Trader Joe's"},
+      {value:'wholefoodsmarket.com',label:'Whole Foods'},
+      {value:'samsclub.com',        label:"Sam's Club"},
+      {value:'ikea.com',            label:'IKEA'},
+      {value:'petco.com',           label:'Petco'},
+      {value:'gamestop.com',        label:'GameStop'},
+    ]
+  },
+  {
+    id:'animals', label:'Animals', emoji:'🦁', bg:'safari', type:'emoji',
+    hint:'Edit the emoji and name for each animal. These display large on the board — no internet needed!',
+    cols:['Emoji','Animal Name'],
+    items:[
+      {value:'🐶',label:'Dog'},{value:'🐱',label:'Cat'},{value:'🐮',label:'Cow'},
+      {value:'🐴',label:'Horse'},{value:'🐷',label:'Pig'},{value:'🐔',label:'Chicken'},
+      {value:'🦌',label:'Deer'},{value:'🐦',label:'Bird'},{value:'🦆',label:'Duck'},
+      {value:'🐰',label:'Rabbit'},{value:'🐿️',label:'Squirrel'},{value:'🐢',label:'Turtle'},
+      {value:'🦋',label:'Butterfly'},{value:'🐝',label:'Bee'},{value:'🐸',label:'Frog'},
+      {value:'🐟',label:'Fish'},{value:'🐌',label:'Snail'},{value:'🐞',label:'Ladybug'},
+      {value:'🦅',label:'Eagle'},{value:'🦉',label:'Owl'},{value:'🦊',label:'Fox'},
+      {value:'🐻',label:'Bear'},{value:'🦝',label:'Raccoon'},{value:'🐐',label:'Goat'},
+      {value:'🐑',label:'Sheep'},{value:'🦃',label:'Turkey'},{value:'🐇',label:'Bunny'},
+      {value:'🦎',label:'Lizard'},
+    ]
+  },
+  {
+    id:'colors', label:'Car Colors', emoji:'🎨', bg:'rainbow', type:'emoji',
+    hint:'Spot these colors on cars! Each emoji represents a color to find.',
+    cols:['Emoji','Color Name'],
+    items:[
+      {value:'🔴',label:'Red'},{value:'🔵',label:'Blue'},{value:'⚪',label:'White'},
+      {value:'⚫',label:'Black'},{value:'🩶',label:'Silver'},{value:'🌫️',label:'Gray'},
+      {value:'🟢',label:'Green'},{value:'🟡',label:'Yellow'},{value:'🟠',label:'Orange'},
+      {value:'🟤',label:'Brown'},{value:'🟣',label:'Purple'},{value:'🩷',label:'Pink'},
+      {value:'✨',label:'Gold'},{value:'🩵',label:'Teal'},{value:'❤️',label:'Maroon'},
+      {value:'🤍',label:'Cream'},{value:'💚',label:'Lime'},{value:'💙',label:'Navy'},
+      {value:'🧡',label:'Rust'},{value:'🫒',label:'Olive'},{value:'🪙',label:'Copper'},
+      {value:'🌈',label:'Two-Tone'},{value:'💥',label:'Neon'},{value:'🖤',label:'Matte'},
+      {value:'🎨',label:'Wrap'},{value:'🌟',label:'Pearlescent'},{value:'🔱',label:'Chrome'},
+      {value:'💜',label:'Violet'},
+    ]
+  },
+  {
+    id:'signs', label:'Road Signs', emoji:'🚦', bg:'road', type:'emoji',
+    hint:'Things to spot out the window! Edit freely.',
+    cols:['Emoji','What to Spot'],
+    items:[
+      {value:'🛑',label:'Stop Sign'},{value:'🚦',label:'Traffic Light'},{value:'⛽',label:'Gas Station'},
+      {value:'🌉',label:'Bridge'},{value:'🚂',label:'Railroad'},{value:'⚠️',label:'Yield'},
+      {value:'🅿️',label:'Rest Area'},{value:'🏥',label:'Hospital'},{value:'🏫',label:'School'},
+      {value:'🚪',label:'Exit Sign'},{value:'📍',label:'Mile Marker'},{value:'💳',label:'Toll Booth'},
+      {value:'👋',label:'Welcome Sign'},{value:'➡️',label:'One Way'},{value:'🔀',label:'Merge'},
+      {value:'🦌',label:'Deer X-ing'},{value:'🚛',label:'Truck Route'},{value:'🚲',label:'Bike Lane'},
+      {value:'🌁',label:'Overpass'},{value:'🗼',label:'Water Tower'},{value:'⛪',label:'Church'},
+      {value:'🚩',label:'Flag'},{value:'🖼️',label:'Billboard'},{value:'🏗️',label:'Construction'},
+      {value:'🌾',label:'Farmland'},{value:'⛰️',label:'Mountain'},{value:'🌲',label:'Forest'},
+      {value:'🏙️',label:'Skyline'},
+    ]
+  },
+  {
+    id:'custom', label:'Custom!', emoji:'✏️', bg:'sky', type:'emoji',
+    hint:'Build your own category from scratch. Add any emojis and names you like!',
+    cols:['Emoji','Item Name'],
+    items:[
+      {value:'🌟',label:'Item 1'},{value:'🎈',label:'Item 2'},{value:'🌈',label:'Item 3'},
+    ]
+  },
+];
+
+let activeCat = CATS[0];
+let items = [];
+
+function init() {
+  const grid = document.getElementById('categoryGrid');
+  CATS.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn' + (cat.id === activeCat.id ? ' active' : '');
+    btn.dataset.id = cat.id;
+    btn.innerHTML = `<span class="cat-emoji">${cat.emoji}</span>${cat.label}<span class="cat-check">✓</span>`;
+    btn.onclick = () => selectCat(cat.id);
+    grid.appendChild(btn);
+  });
+  loadCat(activeCat);
+}
+
+function selectCat(id) {
+  activeCat = CATS.find(c => c.id === id);
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+  loadCat(activeCat);
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('doneSection').style.display = 'none';
+  document.getElementById('buildBtn').disabled = false;
+}
+
+function loadCat(cat) {
+  items = cat.items.map(i => ({...i}));
+  document.getElementById('itemHint').textContent = cat.hint;
+  document.getElementById('gameTitle').value = cat.label + ' Bingo!';
+  renderColHeaders();
+  renderItems();
+}
+
+function renderColHeaders() {
+  const el = document.getElementById('colHeaders');
+  const isFav = activeCat.type === 'favicon';
+  el.className = 'col-headers ' + (isFav ? 'favicon-headers' : 'emoji-headers');
+  el.innerHTML = activeCat.cols.map(c => `<div class="col-header">${c}</div>`).join('') + '<div></div>';
+}
+
+function renderItems() {
+  const list = document.getElementById('itemList');
+  list.innerHTML = '';
+  const isFav = activeCat.type === 'favicon';
+  items.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'item-row ' + (isFav ? 'favicon-row' : 'emoji-row');
+    if (isFav) {
+      row.innerHTML = `
+        <input class="item-input" type="text" value="${esc(item.value)}" placeholder="e.g. toyota.com"
+          oninput="items[${i}].value=this.value">
+        <input class="item-input" type="text" value="${esc(item.label)}" placeholder="Name"
+          oninput="items[${i}].label=this.value;updateCount()">
+        <button class="del-btn" onclick="deleteItem(${i})">✕</button>`;
+    } else {
+      row.innerHTML = `
+        <input class="item-input item-emoji" type="text" value="${item.value}" maxlength="4"
+          oninput="items[${i}].value=this.value">
+        <input class="item-input" type="text" value="${esc(item.label)}" placeholder="Name"
+          oninput="items[${i}].label=this.value;updateCount()">
+        <button class="del-btn" onclick="deleteItem(${i})">✕</button>`;
+    }
+    list.appendChild(row);
+  });
+  updateCount();
+}
+
+function addItem() {
+  const isFav = activeCat.type === 'favicon';
+  items.push(isFav ? {value:'example.com', label:'New Brand'} : {value:'⭐', label:'New Item'});
+  renderItems();
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.item-input:not(.item-emoji)');
+    const last = inputs[inputs.length - 1];
+    if (last) { last.focus(); last.select(); }
+  }, 40);
+}
+
+function deleteItem(i) { items.splice(i, 1); renderItems(); }
+
+function updateCount() {
+  const badge = document.getElementById('countBadge');
+  const n = items.length;
+  badge.textContent = n + ' item' + (n !== 1 ? 's' : '');
+  badge.className = 'count-badge ' + (n < 24 ? 'warn' : 'ok');
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+async function buildGame() {
+  if (items.length < 24) {
+    alert(`Need at least 24 items. You have ${items.length} — add ${24 - items.length} more!`);
+    return;
+  }
+  const btn = document.getElementById('buildBtn');
+  btn.disabled = true;
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('doneSection').style.display = 'none';
+
+  const title    = document.getElementById('gameTitle').value || 'Road Trip Bingo!';
+  const freeLabel = document.getElementById('freeLabel').value || 'FREE!';
+  const isFav    = activeCat.type === 'favicon';
+  const resolved = [];
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    setProgress(i, items.length, isFav ? `Fetching ${item.label}…` : `Preparing ${item.label}…`);
+    if (isFav) {
+      const dataUrl = await fetchFavicon(item.value);
+      resolved.push({ label: item.label, imgType: 'img', img: dataUrl || '' });
+    } else {
+      resolved.push({ label: item.label, imgType: 'emoji', img: item.value });
+    }
+  }
+
+  setProgress(items.length, items.length, 'Building file…');
+  const html = makeGameHTML(title, freeLabel, activeCat.bg, resolved);
+  const blob = new Blob([html], {type:'text/html'});
+  const url  = URL.createObjectURL(blob);
+  const filename = title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') + '.html';
+  document.getElementById('dlLink').href = url;
+  document.getElementById('dlLink').download = filename;
+  document.getElementById('doneSection').style.display = 'block';
+  setProgress(items.length, items.length, '✅ Done!');
+}
+
+function setProgress(done, total, msg) {
+  document.getElementById('barFill').style.width = Math.round((done/total)*100) + '%';
+  document.getElementById('progStatus').textContent = msg;
+}
+
+async function fetchFavicon(domain) {
+  // Tried in order: favicon.im, then DuckDuckGo's icon service
+  // Both have proper CORS headers when served from https://
+  const services = [
+    `https://favicon.im/${domain}?larger=true`,
+    `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+  ];
+  for (const url of services) {
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) continue;
+      const blob = await resp.blob();
+      // Skip if too small (likely a generic placeholder — typically < 1kb)
+      if (blob.size < 200) continue;
+      const dataUrl = await blobToDataUrl(blob);
+      if (dataUrl) return dataUrl;
+    } catch(e) {
+      continue;
+    }
+  }
+  return null;
+}
+
+function blobToDataUrl(blob) {
+  return new Promise(res => {
+    const r = new FileReader();
+    r.onload  = () => res(r.result);
+    r.onerror = () => res(null);
+    r.readAsDataURL(blob);
+  });
+}
+
+const THEMES = {
+  road:    {body:'linear-gradient(180deg,#BAE6FD 0%,#E0F2FE 38%,#BBF7D0 100%)',accent:'#F97316',title:'#1E293B',tshadow:'3px 3px 0 #FCD34D,5px 5px 0 #F87171'},
+  city:    {body:'linear-gradient(180deg,#E0E7FF 0%,#EEF2FF 40%,#F0FDF4 100%)',accent:'#6366F1',title:'#1E1B4B',tshadow:'3px 3px 0 #A5B4FC,5px 5px 0 #818CF8'},
+  safari:  {body:'linear-gradient(180deg,#FEF9C3 0%,#FEF3C7 40%,#D9F99D 100%)',accent:'#D97706',title:'#78350F',tshadow:'3px 3px 0 #FDE68A,5px 5px 0 #F59E0B'},
+  rainbow: {body:'linear-gradient(135deg,#FEE2E2,#FEF9C3,#DCFCE7,#DBEAFE,#F3E8FF)',accent:'#EC4899',title:'#1E293B',tshadow:'3px 3px 0 #FCA5A5,5px 5px 0 #F472B6'},
+  sky:     {body:'linear-gradient(180deg,#BAE6FD 0%,#E0F2FE 60%,#BFDBFE 100%)',accent:'#0EA5E9',title:'#0C4A6E',tshadow:'3px 3px 0 #7DD3FC,5px 5px 0 #38BDF8'},
+};
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function makeGameHTML(title, freeLabel, bgKey, brandList) {
+  const t = THEMES[bgKey] || THEMES.road;
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escHtml(title)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:${t.body};font-family:'Nunito',sans-serif;color:#1E293B;overflow-x:hidden}
+.wrapper{max-width:600px;margin:0 auto;padding:18px 12px 60px}
+header{text-align:center;margin-bottom:14px}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.8rem,7vw,2.8rem);color:${t.title};letter-spacing:1px;text-shadow:${t.tshadow};line-height:1.1}
+.subtitle{font-size:.9rem;font-weight:800;color:${t.accent};margin-top:4px;opacity:.85}
+.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.btn{font-family:'Fredoka One',cursive;font-size:1rem;padding:9px 22px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.2);letter-spacing:.5px;transition:transform .12s,box-shadow .12s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.btn-shuffle{background:${t.accent};color:white}
+.btn-reset{background:#6366F1;color:white}
+.btn-print{background:#0EA5E9;color:white}
+.win{display:none;background:linear-gradient(135deg,#FDE68A,#FCD34D);border:4px solid #F59E0B;border-radius:20px;padding:14px 20px;text-align:center;margin-bottom:14px;font-family:'Fredoka One',cursive;font-size:1.5rem;color:#92400E}
+.win.show{display:block}
+.score{display:flex;justify-content:center;margin-bottom:10px}
+.score span{background:white;border-radius:50px;padding:4px 16px;font-weight:800;font-size:.9rem;color:#0369A1;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.cols{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:4px;padding:0 10px}
+.col{font-family:'Fredoka One',cursive;font-size:clamp(.9rem,3.5vw,1.3rem);text-align:center;border-radius:8px;padding:4px 0}
+.col:nth-child(1){color:#EF4444;background:#FEE2E2}
+.col:nth-child(2){color:#F97316;background:#FFF7ED}
+.col:nth-child(3){color:#16A34A;background:#F0FDF4}
+.col:nth-child(4){color:#2563EB;background:#EFF6FF}
+.col:nth-child(5){color:#9333EA;background:#FAF5FF}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;background:white;border-radius:24px;padding:10px;box-shadow:0 8px 32px rgba(30,41,59,.14),0 2px 0 #CBD5E1;border:3px solid #E2E8F0}
+.cell{aspect-ratio:1;border-radius:12px;background:linear-gradient(135deg,#F8FAFF,#EFF6FF);border:2.5px solid #BAE6FD;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s,border-color .15s,box-shadow .15s;user-select:none;-webkit-tap-highlight-color:transparent;padding:4px 3px 3px}
+.cell:hover{transform:scale(1.05);border-color:#38BDF8;box-shadow:0 4px 12px rgba(56,189,248,.25)}
+.cell:active{transform:scale(.96)}
+.logo{width:66%;aspect-ratio:1;background:white;border-radius:9px;padding:10%;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 5px rgba(0,0,0,.1);flex-shrink:0}
+.logo img{width:100%;height:100%;object-fit:contain;display:block}
+.logo .em{font-size:clamp(1.3rem,4.5vw,2rem);line-height:1}
+.lbl{font-family:'Fredoka One',cursive;font-size:clamp(.42rem,1.7vw,.7rem);color:#1E3A5F;text-align:center;line-height:1.2;margin-top:3px}
+.cell.free{background:linear-gradient(135deg,#FEF9C3,#FDE68A);border-color:#FCD34D;cursor:default}
+.cell.free:hover{transform:none;box-shadow:none}
+.cell.free .lbl{color:#92400E}
+.cell.stamped{background:linear-gradient(135deg,#FFF1F2,#FFE4E6);border-color:#FCA5A5}
+.cell.stamped .logo{opacity:.35}
+.stamp{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.ring{width:76%;height:76%;border-radius:50%;border:4px solid #DC2626;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.4) rotate(-20deg)}
+.cell.stamped .ring{opacity:.92;animation:pop .3s cubic-bezier(.175,.885,.32,1.275) forwards}
+.ring span{font-family:'Fredoka One',cursive;font-size:clamp(.7rem,2.8vw,1rem);color:#DC2626}
+@keyframes pop{from{opacity:0;transform:scale(.4) rotate(-20deg)}to{opacity:.92;transform:scale(1) rotate(-8deg)}}
+.cell.flash{animation:glow .7s ease-in-out 3}
+@keyframes glow{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 4px #FCD34D,0 0 0 8px #F97316}}
+.confetti{position:fixed;top:-10px;border-radius:2px;animation:fall linear forwards;z-index:200;pointer-events:none}
+@keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@media print{
+  body{background:white!important}
+  .controls,.score,.win,.confetti{display:none!important}
+  .wrapper{padding:0;max-width:100%}
+  header{margin-bottom:6px}
+  .title{font-size:22pt;text-shadow:none}
+  .cols{gap:3px;margin-bottom:3px;padding:0 4px}
+  .col{font-size:12pt;padding:2px 0}
+  .board{gap:3px;padding:5px;border:2px solid #CBD5E1;border-radius:10px;box-shadow:none;page-break-inside:avoid}
+  .cell{border-radius:7px;border:1.5px solid #BAE6FD}
+  .cell:hover{transform:none;box-shadow:none}
+  .cell.free{background:#FEF9C3!important}
+  .logo{box-shadow:none}
+  .lbl{font-size:6pt;margin-top:1px}
+  .cell.stamped{background:white!important;border-color:#BAE6FD!important}
+  .cell.stamped .logo{opacity:1!important}
+  .stamp{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <div class="title">${escHtml(title)}</div>
+    <div class="subtitle">Spot it · Stamp it · BINGO!</div>
+  </header>
+  <div class="controls">
+    <button class="btn btn-shuffle" onclick="go()">🔀 New Board</button>
+    <button class="btn btn-reset" onclick="reset()">🔄 Clear Stamps</button>
+    <button class="btn btn-print" onclick="window.print()">🖨️ Print Board</button>
+  </div>
+  <div class="win" id="win">🎉 BINGO! You win! 🎉</div>
+  <div class="score"><span id="sc">0 / 24 found</span></div>
+  <div class="cols">
+    <div class="col">B</div><div class="col">I</div><div class="col">N</div>
+    <div class="col">G</div><div class="col">O</div>
+  </div>
+  <div class="board" id="board"></div>
+</div>
+<script>
+const FREE=${JSON.stringify(freeLabel)};
+const ALL=${JSON.stringify(brandList)};
+let bd=[],st=new Set();
+function eh(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function sh(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function go(){
+  st=new Set([12]);
+  const p=sh(ALL).slice(0,24);
+  bd=[...p.slice(0,12),null,...p.slice(12,24)];
+  document.getElementById('win').classList.remove('show');
+  render();sc();
+}
+function render(){
+  const el=document.getElementById('board');el.innerHTML='';
+  bd.forEach((b,i)=>{
+    const c=document.createElement('div');
+    c.className='cell'+(i===12?' free':'')+(st.has(i)?' stamped':'');
+    c.dataset.i=i;
+    if(i===12){
+      c.innerHTML='<div class="logo" style="background:rgba(254,249,195,.5);box-shadow:none"><span class="em">⭐</span></div><div class="lbl" style="color:#92400E">'+FREE+'</div>';
+    } else {
+      const img=b.imgType==='emoji'
+        ? '<span class="em">'+b.img+'</span>'
+        : (b.img?'<img src="'+b.img+'" alt="'+eh(b.label)+'">':'<span class="em" style="font-size:.6rem;color:#94A3B8">'+eh(b.label)+'</span>');
+      c.innerHTML='<div class="logo">'+img+'</div><div class="lbl">'+eh(b.label)+'</div>'+(st.has(i)?'<div class="stamp"><div class="ring"><span>✓</span></div></div>':'');
+      c.addEventListener('click',()=>tap(i));
+    }
+    el.appendChild(c);
+  });
+}
+function tap(i){if(i===12)return;st.has(i)?st.delete(i):st.add(i);render();sc();win();}
+function reset(){st=new Set([12]);document.getElementById('win').classList.remove('show');render();sc();}
+function sc(){document.getElementById('sc').textContent=(st.size-1)+' / 24 found';}
+function win(){
+  const lines=[[0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],[0,5,10,15,20],[1,6,11,16,21],[2,7,12,17,22],[3,8,13,18,23],[4,9,14,19,24],[0,6,12,18,24],[4,8,12,16,20]];
+  let won=false;
+  lines.forEach(l=>{if(l.every(i=>st.has(i))){won=true;l.forEach(i=>{const c=document.querySelector('.cell[data-i="'+i+'"]');if(c){c.classList.remove('flash');void c.offsetWidth;c.classList.add('flash');}});}});
+  if(won){document.getElementById('win').classList.add('show');boom();}
+}
+function boom(){const cols=['#F87171','#FCD34D','#4ADE80','#60A5FA','#C084FC','#FB923C'];for(let i=0;i<60;i++){const d=document.createElement('div');d.className='confetti';d.style.left=Math.random()*100+'vw';d.style.background=cols[~~(Math.random()*cols.length)];const s=(6+Math.random()*10)+'px';d.style.width=s;d.style.height=s;d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=(Math.random()*1.2)+'s';d.style.borderRadius=Math.random()>.5?'50%':'2px';document.body.appendChild(d);d.addEventListener('animationend',()=>d.remove());}}
+go();
+<\/script>
+</body>
+</html>`;
+}
+
+init();
+</script>
+</body>
+</html>
