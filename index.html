@@ -5,146 +5,139 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Road Trip Bingo</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
-
 <style>
-/* ── TOKENS ────────────────────────────────────────── */
 :root {
-  --cream:   #FAF7F2;
-  --ink:     #1C1917;
-  --muted:   #78716C;
-  --border:  #E7E3DC;
-  --white:   #FFFFFF;
-  --radius-sm: 10px;
-  --radius:    16px;
-  --radius-lg: 24px;
-
-  /* Category accent — overridden per category */
-  --accent:  #F97316;
-  --accent2: #C2410C;
-  --cell-bg: #FFF8F0;
+  --cream:    #FAF7F2;
+  --ink:      #1C1917;
+  --muted:    #78716C;
+  --border:   #E7E3DC;
+  --white:    #FFFFFF;
+  --accent:   #DC2626;
+  --accent2:  #991B1B;
+  --cell-bg:  #FFF5F5;
+  --cols: 3;
 }
-
-/* ── RESET ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { height: 100%; }
+html, body { height: 100%; }
 body {
-  min-height: 100%;
   background: var(--cream);
   font-family: 'Nunito', sans-serif;
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  min-height: 100%;
 }
 
-/* ── LAYOUT ────────────────────────────────────────── */
+/* ── LAYOUT ── */
 .app {
-  max-width: 560px;
+  max-width: 700px;
   margin: 0 auto;
-  padding: 24px 16px 48px;
+  padding: 20px 14px 48px;
 }
 
-/* ── HEADER ────────────────────────────────────────── */
+/* ── HEADER ── */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
+.header-left { display: flex; flex-direction: column; gap: 1px; }
 .header-title {
   font-family: 'Baloo 2', cursive;
-  font-size: 1.6rem;
+  font-size: 1.55rem;
   font-weight: 800;
-  color: var(--ink);
   line-height: 1;
+  color: var(--ink);
 }
-.header-title span {
-  color: var(--accent);
+.header-title span { color: var(--accent); }
+.header-cat {
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .3px;
 }
 .settings-btn {
-  width: 38px; height: 38px;
+  width: 40px; height: 40px;
   border-radius: 50%;
   border: 2px solid var(--border);
   background: var(--white);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   font-size: 1.1rem;
-  transition: border-color .15s, background .15s;
+  transition: border-color .15s;
   flex-shrink: 0;
 }
-.settings-btn:hover { border-color: var(--accent); background: var(--cell-bg); }
+.settings-btn:hover { border-color: var(--accent); }
 
-/* ── CATEGORY PILL ROW ─────────────────────────────── */
-.cat-strip {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 16px;
-  scrollbar-width: none;
+/* ── WIN BANNER ── */
+.win-banner {
+  display: none;
+  background: #FFFBEB;
+  border: 2.5px solid #FCD34D;
+  border-radius: 14px;
+  padding: 12px 18px;
+  text-align: center;
+  margin-bottom: 14px;
 }
-.cat-strip::-webkit-scrollbar { display: none; }
-.cat-pill {
-  flex-shrink: 0;
-  padding: 7px 16px;
-  border-radius: 99px;
-  border: 2px solid var(--border);
-  background: var(--white);
-  font-family: 'Nunito', sans-serif;
+.win-banner.show { display: block; }
+.win-title {
+  font-family: 'Baloo 2', cursive;
   font-weight: 800;
-  font-size: .82rem;
-  color: var(--muted);
-  cursor: pointer;
-  transition: all .15s;
-  white-space: nowrap;
+  font-size: 1.35rem;
+  color: #92400E;
 }
-.cat-pill:hover { border-color: var(--accent); color: var(--accent); }
-.cat-pill.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--white);
-}
+.win-sub { font-size: .8rem; color: #B45309; margin-top: 1px; }
 
-/* ── BOARD ─────────────────────────────────────────── */
+/* ── SCORE ROW ── */
+.score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+.score-label {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+/* Pip grid — always square: we'll size it via JS to cols × rows */
+.pip-grid {
+  display: grid;
+  gap: 4px;
+  flex: 1;
+  justify-content: flex-end;
+}
+.pip {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background .18s;
+}
+.pip.lit { background: var(--accent); }
+
+/* ── BOARD ── */
 .board-wrap {
   background: var(--white);
-  border-radius: var(--radius-lg);
-  padding: 12px;
+  border-radius: 20px;
+  padding: 10px;
   border: 2px solid var(--border);
   box-shadow: 0 2px 0 var(--border);
   margin-bottom: 14px;
 }
-
-/* BINGO header row */
-.bingo-row {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
-  margin-bottom: 6px;
-}
-.bingo-letter {
-  font-family: 'Baloo 2', cursive;
-  font-weight: 800;
-  font-size: clamp(1rem, 4vw, 1.4rem);
-  text-align: center;
-  border-radius: var(--radius-sm);
-  padding: 4px 0;
-  color: var(--white);
-}
-.bingo-letter:nth-child(1) { background: #EF4444; }
-.bingo-letter:nth-child(2) { background: #F97316; }
-.bingo-letter:nth-child(3) { background: #22C55E; }
-.bingo-letter:nth-child(4) { background: #3B82F6; }
-.bingo-letter:nth-child(5) { background: #A855F7; }
-
-/* Grid */
 .board {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
+  gap: 7px;
+  grid-template-columns: repeat(var(--cols), 1fr);
 }
 
+/* ── CELL ── */
 .cell {
   aspect-ratio: 1;
-  border-radius: var(--radius-sm);
+  border-radius: 12px;
   background: var(--cell-bg);
   border: 1.5px solid var(--border);
   display: flex;
@@ -157,14 +150,14 @@ body {
   transition: transform .12s, border-color .15s;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  padding: 6px 4px 4px;
-  gap: 3px;
+  padding: 8% 5% 5%;
+  gap: 5%;
 }
 .cell:hover  { transform: scale(1.04); border-color: var(--accent); }
 .cell:active { transform: scale(.95); }
 
 .cell-img {
-  width: 58%;
+  width: 52%;
   aspect-ratio: 1;
   display: flex;
   align-items: center;
@@ -173,22 +166,20 @@ body {
 }
 .cell-img img {
   width: 100%; height: 100%;
-  object-fit: contain;
-  display: block;
+  object-fit: contain; display: block;
 }
 .cell-img .em {
-  font-size: clamp(1.2rem, 4.5vw, 1.9rem);
+  /* scales with cell size via vw-based calc */
+  font-size: clamp(1.4rem, calc(var(--cols) * 1.8vw + .5rem), 3rem);
   line-height: 1;
 }
-
 .cell-name {
   font-family: 'Baloo 2', cursive;
   font-weight: 700;
-  font-size: clamp(.38rem, 1.5vw, .62rem);
+  font-size: clamp(.5rem, calc(3vw / var(--cols) + .3rem), .95rem);
   color: var(--ink);
   text-align: center;
   line-height: 1.1;
-  letter-spacing: .1px;
 }
 
 /* FREE cell */
@@ -201,67 +192,50 @@ body {
 .cell.is-free .cell-name { color: #92400E; font-weight: 800; }
 
 /* Stamped */
-.cell.is-stamped {
-  background: #FFF1F2;
-  border-color: #FCA5A5;
-}
-.cell.is-stamped .cell-img { opacity: .25; }
-
+.cell.is-stamped { background: #FFF1F2; border-color: #FCA5A5; }
+.cell.is-stamped .cell-img { opacity: .2; }
 .stamp-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
   pointer-events: none;
 }
 .stamp-circle {
-  width: 72%;
-  height: 72%;
+  width: 68%; height: 68%;
   border-radius: 50%;
-  border: 3.5px solid #EF4444;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transform: scale(.3) rotate(-30deg);
+  border: 3px solid #EF4444;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: scale(.3) rotate(-30deg);
 }
 .is-stamped .stamp-circle {
-  opacity: .9;
-  animation: stamp-in .25s cubic-bezier(.175,.885,.32,1.275) forwards;
+  opacity: .88;
+  animation: stamp-in .22s cubic-bezier(.175,.885,.32,1.275) forwards;
 }
 .stamp-mark {
   font-family: 'Baloo 2', cursive;
-  font-size: clamp(.6rem, 2.5vw, .9rem);
+  font-size: clamp(.7rem, 3vw, 1.2rem);
   font-weight: 800;
   color: #EF4444;
 }
 @keyframes stamp-in {
-  to { opacity: .9; transform: scale(1) rotate(-6deg); }
+  to { opacity: .88; transform: scale(1) rotate(-6deg); }
 }
-
-/* Win flash */
-.cell.is-winner {
-  animation: win-pulse .6s ease-in-out 3;
-}
+.cell.is-winner { animation: win-pulse .6s ease-in-out 3; }
 @keyframes win-pulse {
   0%,100% { box-shadow: none; }
-  50%      { box-shadow: 0 0 0 3px #FCD34D, 0 0 0 6px #F97316; }
+  50%     { box-shadow: 0 0 0 3px #FCD34D, 0 0 0 6px #F97316; }
 }
 
-/* ── CONTROLS ──────────────────────────────────────── */
+/* ── CONTROLS ── */
 .controls {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
+  display: flex; gap: 8px; margin-bottom: 12px;
 }
 .btn {
   flex: 1;
   font-family: 'Baloo 2', cursive;
   font-weight: 700;
-  font-size: .88rem;
-  padding: 10px 8px;
-  border-radius: var(--radius-sm);
+  font-size: .92rem;
+  padding: 11px 8px;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
   transition: opacity .12s, transform .1s;
@@ -272,164 +246,98 @@ body {
 .btn-clear { background: var(--white); color: var(--ink); border: 2px solid var(--border); }
 .btn-print { background: var(--white); color: var(--ink); border: 2px solid var(--border); }
 
-/* ── SCORE ─────────────────────────────────────────── */
-.score-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  padding: 0 2px;
-}
-.score-label {
-  font-family: 'Baloo 2', cursive;
-  font-weight: 700;
-  font-size: .85rem;
-  color: var(--muted);
-}
-.score-pips {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  max-width: 200px;
-}
-.pip {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--border);
-  transition: background .2s;
-}
-.pip.lit { background: var(--accent); }
-
-/* ── WIN BANNER ────────────────────────────────────── */
-.win-banner {
-  display: none;
-  background: #FFFBEB;
-  border: 2.5px solid #FCD34D;
-  border-radius: var(--radius);
-  padding: 14px 20px;
-  text-align: center;
-  margin-bottom: 14px;
-}
-.win-banner.show { display: block; }
-.win-banner-title {
-  font-family: 'Baloo 2', cursive;
-  font-weight: 800;
-  font-size: 1.4rem;
-  color: #92400E;
-}
-.win-banner-sub {
-  font-size: .82rem;
-  color: #B45309;
-  margin-top: 2px;
-}
-
-/* ── SETTINGS PANEL ────────────────────────────────── */
+/* ── SETTINGS SHEET ── */
 .settings-overlay {
   display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(28,25,23,.5);
+  position: fixed; inset: 0;
+  background: rgba(28,25,23,.48);
   z-index: 100;
   align-items: flex-end;
   justify-content: center;
-  padding: 0;
 }
 .settings-overlay.open { display: flex; }
 .settings-sheet {
   background: var(--cream);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  width: 100%;
-  max-width: 560px;
-  max-height: 85vh;
+  border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 700px;
+  max-height: 88vh;
   overflow-y: auto;
-  padding: 20px 20px 40px;
-  animation: slide-up .25s ease;
+  padding: 16px 18px 48px;
+  animation: slide-up .22s ease;
 }
 @keyframes slide-up {
   from { transform: translateY(100%); }
   to   { transform: translateY(0); }
 }
 .sheet-handle {
-  width: 36px; height: 4px;
+  width: 34px; height: 4px;
   background: var(--border);
   border-radius: 99px;
-  margin: 0 auto 18px;
+  margin: 0 auto 16px;
 }
 .sheet-title {
   font-family: 'Baloo 2', cursive;
   font-weight: 800;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   margin-bottom: 16px;
-  color: var(--ink);
 }
-.sheet-section {
-  margin-bottom: 20px;
-}
-.sheet-section-label {
-  font-size: .72rem;
+.sheet-section { margin-bottom: 20px; }
+.section-label {
+  font-size: .7rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: .8px;
   color: var(--muted);
-  margin-bottom: 10px;
+  margin-bottom: 9px;
 }
 
-/* Category grid in settings */
+/* Cat grid in settings */
 .cat-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 7px;
 }
 .cat-tile {
   border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 10px 8px;
+  border-radius: 10px;
+  padding: 9px 6px;
   background: var(--white);
   cursor: pointer;
   text-align: center;
-  transition: all .15s;
   font-family: 'Nunito', sans-serif;
   font-weight: 800;
-  font-size: .78rem;
+  font-size: .76rem;
   color: var(--muted);
+  transition: all .15s;
 }
-.cat-tile-emoji { font-size: 1.5rem; display: block; margin-bottom: 3px; }
-.cat-tile:hover { border-color: var(--accent); color: var(--accent); }
+.cat-tile-emoji { font-size: 1.4rem; display: block; margin-bottom: 2px; }
+.cat-tile:hover  { border-color: var(--accent); color: var(--accent); }
 .cat-tile.active { border-color: var(--accent); background: var(--cell-bg); color: var(--accent); }
 
-/* Item list in settings */
-.item-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; }
-.item-row {
-  display: grid;
-  gap: 7px;
-  align-items: center;
-}
+/* Item list */
+.item-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 9px; }
+.item-row  { display: grid; gap: 6px; align-items: center; }
 .favicon-row { grid-template-columns: 1fr 1fr auto; }
-.emoji-row   { grid-template-columns: 44px 1fr auto; }
+.emoji-row   { grid-template-columns: 42px 1fr auto; }
 .item-input {
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
-  font-size: .85rem;
-  padding: 7px 11px;
+  font-size: .84rem;
+  padding: 7px 10px;
   border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  outline: none;
-  width: 100%;
+  border-radius: 8px;
+  outline: none; width: 100%;
   background: var(--white);
   color: var(--ink);
   transition: border-color .15s;
 }
 .item-input:focus { border-color: var(--accent); }
-.emoji-input { text-align: center; font-size: 1.2rem; padding: 5px 4px; }
+.emoji-input { text-align: center; font-size: 1.1rem; padding: 5px 3px; }
 .del-btn {
-  width: 30px; height: 30px;
-  border: none;
-  border-radius: 8px;
-  background: #FEE2E2;
-  color: #EF4444;
-  font-size: .9rem;
-  cursor: pointer;
+  width: 28px; height: 28px;
+  border: none; border-radius: 7px;
+  background: #FEE2E2; color: #EF4444;
+  font-size: .85rem; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
@@ -438,105 +346,76 @@ body {
   width: 100%;
   background: var(--cream);
   border: 2px dashed var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   padding: 8px;
   font-family: 'Nunito', sans-serif;
   font-weight: 800;
-  font-size: .82rem;
+  font-size: .8rem;
   color: var(--muted);
   cursor: pointer;
   transition: border-color .15s, color .15s;
+  margin-bottom: 4px;
 }
 .add-row-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-/* Loading state */
-.loading-bar {
-  display: none;
-  height: 4px;
-  background: var(--border);
-  border-radius: 99px;
-  overflow: hidden;
-  margin-bottom: 10px;
+/* Loading */
+.loading-wrap { margin-bottom: 10px; display: none; }
+.loading-wrap.show { display: block; }
+.loading-track {
+  height: 4px; background: var(--border);
+  border-radius: 99px; overflow: hidden; margin-bottom: 6px;
 }
-.loading-bar.show { display: block; }
 .loading-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 99px;
-  width: 0%;
+  height: 100%; border-radius: 99px;
+  background: var(--accent); width: 0%;
   transition: width .3s;
 }
-.loading-label {
-  font-size: .75rem;
-  font-weight: 700;
-  color: var(--muted);
-  text-align: center;
-  margin-bottom: 12px;
-  min-height: 1.1em;
+.loading-text {
+  font-size: .73rem; font-weight: 700;
+  color: var(--muted); text-align: center;
 }
+
+.count-hint {
+  font-size: .73rem; font-weight: 700;
+  color: var(--muted); margin-bottom: 10px;
+}
+.count-hint.warn { color: #EF4444; }
 
 .apply-btn {
   width: 100%;
   font-family: 'Baloo 2', cursive;
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 700; font-size: 1rem;
   padding: 13px;
-  background: var(--accent);
-  color: var(--white);
-  border: none;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
+  background: var(--accent); color: var(--white);
+  border: none; border-radius: 10px;
+  cursor: pointer; letter-spacing: .2px;
   transition: opacity .15s;
-  letter-spacing: .2px;
 }
-.apply-btn:disabled { opacity: .5; cursor: default; }
+.apply-btn:disabled { opacity: .45; cursor: default; }
 
-/* Count badge */
-.count-note {
-  font-size: .75rem;
-  font-weight: 700;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-.count-note.warn { color: #EF4444; }
-
-/* ── CONFETTI ───────────────────────────────────────── */
+/* ── CONFETTI ── */
 .confetti-piece {
-  position: fixed;
-  top: -12px;
+  position: fixed; top: -12px; pointer-events: none;
   border-radius: 3px;
-  pointer-events: none;
   animation: confetti-fall linear forwards;
   z-index: 300;
 }
 @keyframes confetti-fall {
   0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(105vh) rotate(540deg); opacity: 0; }
+  100% { transform: translateY(108vh) rotate(540deg); opacity: 0; }
 }
 
-/* ── PRINT ──────────────────────────────────────────── */
+/* ── PRINT ── */
 @media print {
   body { background: white; }
-  .header, .cat-strip, .controls, .score-row,
-  .win-banner, .settings-overlay, .confetti-piece { display: none !important; }
+  .header, .score-row, .win-banner,
+  .controls, .settings-overlay, .confetti-piece { display: none !important; }
   .app { padding: 0; max-width: 100%; }
-  .board-wrap {
-    border: none;
-    box-shadow: none;
-    padding: 6px;
-    border-radius: 0;
-  }
-  .bingo-row { gap: 3px; margin-bottom: 3px; }
-  .bingo-letter { font-size: 14pt; padding: 2px 0; border-radius: 6px; }
-  .board { gap: 3px; }
-  .cell {
-    border-radius: 6px;
-    border: 1.5px solid #E7E3DC;
-    padding: 4px 2px 2px;
-    gap: 2px;
-  }
+  .board-wrap { border: none; box-shadow: none; padding: 4px; border-radius: 0; }
+  .board { gap: 4px; }
+  .cell { border-radius: 8px; border: 1.5px solid #E7E3DC; }
   .cell:hover { transform: none; }
-  .cell-name { font-size: 5.5pt; }
+  .cell-name { font-size: 7pt; }
   .is-stamped { background: white !important; border-color: #E7E3DC !important; }
   .is-stamped .cell-img { opacity: 1 !important; }
   .stamp-overlay { display: none !important; }
@@ -544,43 +423,30 @@ body {
 </style>
 </head>
 <body>
-
 <div class="app">
 
-  <!-- Header -->
   <div class="header">
-    <div class="header-title">Road Trip <span>Bingo</span></div>
+    <div class="header-left">
+      <div class="header-title">Road Trip <span>Bingo</span></div>
+      <div class="header-cat" id="headerCat"></div>
+    </div>
     <button class="settings-btn" onclick="openSettings()" title="Settings">&#x2699;&#xFE0F;</button>
   </div>
 
-  <!-- Category strip -->
-  <div class="cat-strip" id="catStrip"></div>
-
-  <!-- Win banner -->
   <div class="win-banner" id="winBanner">
-    <div class="win-banner-title">&#x1F389; BINGO!</div>
-    <div class="win-banner-sub">You found five in a row!</div>
+    <div class="win-title">&#x1F389; BINGO!</div>
+    <div class="win-sub">Five in a row!</div>
   </div>
 
-  <!-- Score -->
   <div class="score-row">
-    <div class="score-label" id="scoreLabel">0 of 24 found</div>
-    <div class="score-pips" id="scorePips"></div>
+    <div class="score-label" id="scoreLabel">0 found</div>
+    <div class="pip-grid" id="pipGrid"></div>
   </div>
 
-  <!-- Board -->
   <div class="board-wrap">
-    <div class="bingo-row">
-      <div class="bingo-letter">B</div>
-      <div class="bingo-letter">I</div>
-      <div class="bingo-letter">N</div>
-      <div class="bingo-letter">G</div>
-      <div class="bingo-letter">O</div>
-    </div>
     <div class="board" id="board"></div>
   </div>
 
-  <!-- Controls -->
   <div class="controls">
     <button class="btn btn-new"   onclick="newBoard()">&#x1F500; New Board</button>
     <button class="btn btn-clear" onclick="clearStamps()">&#x21BA; Clear</button>
@@ -591,277 +457,252 @@ body {
 
 <!-- Settings sheet -->
 <div class="settings-overlay" id="settingsOverlay" onclick="maybeClose(event)">
-  <div class="settings-sheet" id="settingsSheet">
+  <div class="settings-sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">Settings</div>
 
     <div class="sheet-section">
-      <div class="sheet-section-label">Category</div>
+      <div class="section-label">Category</div>
       <div class="cat-grid" id="catGrid"></div>
     </div>
 
     <div class="sheet-section">
-      <div class="sheet-section-label">Items <span class="count-note" id="countNote"></span></div>
+      <div class="section-label">Items</div>
+      <div class="count-hint" id="countHint"></div>
       <div class="item-list" id="itemList"></div>
       <button class="add-row-btn" onclick="addItem()">+ Add item</button>
     </div>
 
-    <div class="loading-bar" id="loadingBar">
-      <div class="loading-fill" id="loadingFill"></div>
+    <div class="loading-wrap" id="loadingWrap">
+      <div class="loading-track"><div class="loading-fill" id="loadingFill"></div></div>
+      <div class="loading-text" id="loadingText"></div>
     </div>
-    <div class="loading-label" id="loadingLabel"></div>
 
-    <button class="apply-btn" id="applyBtn" onclick="applySettings()">Apply &amp; Shuffle</button>
+    <button class="apply-btn" id="applyBtn" onclick="applyAndClose()">Apply &amp; Shuffle</button>
   </div>
 </div>
 
-<!-- ── DATA ─────────────────────────────────────────── -->
+<!-- ── CATEGORY DATA ── -->
 <script type="application/json" id="catData">
 [
   {
-    "id": "cars", "label": "Car Brands", "emoji": "\uD83D\uDE97",
-    "type": "favicon", "accent": "#DC2626", "accent2": "#991B1B", "cellBg": "#FFF5F5",
-    "hint": "Domain to fetch logo from (e.g. toyota.com)",
-    "items": [
-      {"v": "toyota.com",         "n": "Toyota"},
-      {"v": "honda.com",          "n": "Honda"},
-      {"v": "ford.com",           "n": "Ford"},
-      {"v": "chevrolet.com",      "n": "Chevy"},
-      {"v": "dodge.com",          "n": "Dodge"},
-      {"v": "jeep.com",           "n": "Jeep"},
-      {"v": "nissanusa.com",      "n": "Nissan"},
-      {"v": "hyundaiusa.com",     "n": "Hyundai"},
-      {"v": "kia.com",            "n": "Kia"},
-      {"v": "subaru.com",         "n": "Subaru"},
-      {"v": "bmwusa.com",         "n": "BMW"},
-      {"v": "tesla.com",          "n": "Tesla"},
-      {"v": "buick.com",          "n": "Buick"},
-      {"v": "gmc.com",            "n": "GMC"},
-      {"v": "mazdausa.com",       "n": "Mazda"},
-      {"v": "vw.com",             "n": "VW"},
-      {"v": "volvocars.com",      "n": "Volvo"},
-      {"v": "audiusa.com",        "n": "Audi"},
-      {"v": "lexus.com",          "n": "Lexus"},
-      {"v": "acura.com",          "n": "Acura"},
-      {"v": "mbusa.com",          "n": "Mercedes"},
-      {"v": "porsche.com",        "n": "Porsche"},
-      {"v": "mitsubishicars.com", "n": "Mitsubishi"},
-      {"v": "lincoln.com",        "n": "Lincoln"},
-      {"v": "infinitiusa.com",    "n": "Infiniti"},
-      {"v": "cadillac.com",       "n": "Cadillac"},
-      {"v": "ramtrucks.com",      "n": "Ram"},
-      {"v": "chrysler.com",       "n": "Chrysler"}
+    "id":"cars","label":"Car Brands","emoji":"\uD83D\uDE97",
+    "type":"favicon","accent":"#DC2626","accent2":"#991B1B","cellBg":"#FFF5F5",
+    "items":[
+      {"v":"toyota.com","n":"Toyota"},{"v":"honda.com","n":"Honda"},
+      {"v":"ford.com","n":"Ford"},{"v":"chevrolet.com","n":"Chevy"},
+      {"v":"dodge.com","n":"Dodge"},{"v":"jeep.com","n":"Jeep"},
+      {"v":"nissanusa.com","n":"Nissan"},{"v":"hyundaiusa.com","n":"Hyundai"},
+      {"v":"kia.com","n":"Kia"},{"v":"subaru.com","n":"Subaru"},
+      {"v":"bmwusa.com","n":"BMW"},{"v":"tesla.com","n":"Tesla"},
+      {"v":"buick.com","n":"Buick"},{"v":"gmc.com","n":"GMC"},
+      {"v":"mazdausa.com","n":"Mazda"},{"v":"vw.com","n":"VW"},
+      {"v":"volvocars.com","n":"Volvo"},{"v":"audiusa.com","n":"Audi"},
+      {"v":"lexus.com","n":"Lexus"},{"v":"acura.com","n":"Acura"},
+      {"v":"mbusa.com","n":"Mercedes"},{"v":"porsche.com","n":"Porsche"},
+      {"v":"mitsubishicars.com","n":"Mitsubishi"},{"v":"lincoln.com","n":"Lincoln"},
+      {"v":"infinitiusa.com","n":"Infiniti"},{"v":"cadillac.com","n":"Cadillac"},
+      {"v":"ramtrucks.com","n":"Ram"},{"v":"chrysler.com","n":"Chrysler"}
     ]
   },
   {
-    "id": "stores", "label": "Store Signs", "emoji": "\uD83D\uDED2",
-    "type": "favicon", "accent": "#2563EB", "accent2": "#1D4ED8", "cellBg": "#F0F7FF",
-    "hint": "Domain to fetch logo from (e.g. target.com)",
-    "items": [
-      {"v": "target.com",           "n": "Target"},
-      {"v": "walmart.com",          "n": "Walmart"},
-      {"v": "costco.com",           "n": "Costco"},
-      {"v": "homedepot.com",        "n": "Home Depot"},
-      {"v": "lowes.com",            "n": "Lowes"},
-      {"v": "cvs.com",              "n": "CVS"},
-      {"v": "walgreens.com",        "n": "Walgreens"},
-      {"v": "starbucks.com",        "n": "Starbucks"},
-      {"v": "mcdonalds.com",        "n": "McDonalds"},
-      {"v": "chick-fil-a.com",      "n": "Chick-fil-A"},
-      {"v": "subway.com",           "n": "Subway"},
-      {"v": "dunkindonuts.com",     "n": "Dunkin"},
-      {"v": "wendys.com",           "n": "Wendys"},
-      {"v": "bk.com",               "n": "Burger King"},
-      {"v": "tacobell.com",         "n": "Taco Bell"},
-      {"v": "pizzahut.com",         "n": "Pizza Hut"},
-      {"v": "dominos.com",          "n": "Dominos"},
-      {"v": "hobbylobby.com",       "n": "Hobby Lobby"},
-      {"v": "dollartree.com",       "n": "Dollar Tree"},
-      {"v": "bestbuy.com",          "n": "Best Buy"},
-      {"v": "tjmaxx.com",           "n": "TJ Maxx"},
-      {"v": "aldi.us",              "n": "Aldi"},
-      {"v": "traderjoes.com",       "n": "Trader Joes"},
-      {"v": "wholefoodsmarket.com", "n": "Whole Foods"},
-      {"v": "samsclub.com",         "n": "Sams Club"},
-      {"v": "ikea.com",             "n": "IKEA"},
-      {"v": "petco.com",            "n": "Petco"},
-      {"v": "gamestop.com",         "n": "GameStop"}
+    "id":"stores","label":"Store Signs","emoji":"\uD83D\uDED2",
+    "type":"favicon","accent":"#2563EB","accent2":"#1D4ED8","cellBg":"#EFF6FF",
+    "items":[
+      {"v":"target.com","n":"Target"},{"v":"walmart.com","n":"Walmart"},
+      {"v":"costco.com","n":"Costco"},{"v":"homedepot.com","n":"Home Depot"},
+      {"v":"lowes.com","n":"Lowes"},{"v":"cvs.com","n":"CVS"},
+      {"v":"walgreens.com","n":"Walgreens"},{"v":"starbucks.com","n":"Starbucks"},
+      {"v":"mcdonalds.com","n":"McDonalds"},{"v":"chick-fil-a.com","n":"Chick-fil-A"},
+      {"v":"subway.com","n":"Subway"},{"v":"dunkindonuts.com","n":"Dunkin"},
+      {"v":"wendys.com","n":"Wendys"},{"v":"bk.com","n":"Burger King"},
+      {"v":"tacobell.com","n":"Taco Bell"},{"v":"pizzahut.com","n":"Pizza Hut"},
+      {"v":"dominos.com","n":"Dominos"},{"v":"hobbylobby.com","n":"Hobby Lobby"},
+      {"v":"dollartree.com","n":"Dollar Tree"},{"v":"bestbuy.com","n":"Best Buy"},
+      {"v":"tjmaxx.com","n":"TJ Maxx"},{"v":"aldi.us","n":"Aldi"},
+      {"v":"traderjoes.com","n":"Trader Joes"},{"v":"wholefoodsmarket.com","n":"Whole Foods"},
+      {"v":"samsclub.com","n":"Sams Club"},{"v":"ikea.com","n":"IKEA"},
+      {"v":"petco.com","n":"Petco"},{"v":"gamestop.com","n":"GameStop"}
     ]
   },
   {
-    "id": "animals", "label": "Animals", "emoji": "\uD83E\uDD81",
-    "type": "emoji", "accent": "#16A34A", "accent2": "#15803D", "cellBg": "#F0FDF4",
-    "hint": "Emoji shown on the board",
-    "items": [
-      {"v": "\uD83D\uDC36", "n": "Dog"},       {"v": "\uD83D\uDC31", "n": "Cat"},
-      {"v": "\uD83D\uDC2E", "n": "Cow"},       {"v": "\uD83D\uDC34", "n": "Horse"},
-      {"v": "\uD83D\uDC37", "n": "Pig"},       {"v": "\uD83D\uDC14", "n": "Chicken"},
-      {"v": "\uD83E\uDD8C", "n": "Deer"},      {"v": "\uD83D\uDC26", "n": "Bird"},
-      {"v": "\uD83E\uDD86", "n": "Duck"},      {"v": "\uD83D\uDC30", "n": "Rabbit"},
-      {"v": "\uD83D\uDC3F", "n": "Squirrel"}, {"v": "\uD83D\uDC22", "n": "Turtle"},
-      {"v": "\uD83E\uDD8B", "n": "Butterfly"},{"v": "\uD83D\uDC1D", "n": "Bee"},
-      {"v": "\uD83D\uDC38", "n": "Frog"},      {"v": "\uD83D\uDC1F", "n": "Fish"},
-      {"v": "\uD83D\uDC0C", "n": "Snail"},     {"v": "\uD83D\uDC1E", "n": "Ladybug"},
-      {"v": "\uD83E\uDD85", "n": "Eagle"},     {"v": "\uD83E\uDD89", "n": "Owl"},
-      {"v": "\uD83E\uDD8A", "n": "Fox"},       {"v": "\uD83D\uDC3B", "n": "Bear"},
-      {"v": "\uD83E\uDD9D", "n": "Raccoon"},   {"v": "\uD83D\uDC10", "n": "Goat"},
-      {"v": "\uD83D\uDC11", "n": "Sheep"},     {"v": "\uD83E\uDD83", "n": "Turkey"},
-      {"v": "\uD83D\uDC07", "n": "Bunny"},     {"v": "\uD83E\uDD8E", "n": "Lizard"}
+    "id":"animals","label":"Animals","emoji":"\uD83E\uDD81",
+    "type":"emoji","accent":"#16A34A","accent2":"#15803D","cellBg":"#F0FDF4",
+    "items":[
+      {"v":"\uD83D\uDC36","n":"Dog"},{"v":"\uD83D\uDC31","n":"Cat"},
+      {"v":"\uD83D\uDC2E","n":"Cow"},{"v":"\uD83D\uDC34","n":"Horse"},
+      {"v":"\uD83D\uDC37","n":"Pig"},{"v":"\uD83D\uDC14","n":"Chicken"},
+      {"v":"\uD83E\uDD8C","n":"Deer"},{"v":"\uD83D\uDC26","n":"Bird"},
+      {"v":"\uD83E\uDD86","n":"Duck"},{"v":"\uD83D\uDC30","n":"Rabbit"},
+      {"v":"\uD83D\uDC3F","n":"Squirrel"},{"v":"\uD83D\uDC22","n":"Turtle"},
+      {"v":"\uD83E\uDD8B","n":"Butterfly"},{"v":"\uD83D\uDC1D","n":"Bee"},
+      {"v":"\uD83D\uDC38","n":"Frog"},{"v":"\uD83D\uDC1F","n":"Fish"},
+      {"v":"\uD83D\uDC0C","n":"Snail"},{"v":"\uD83D\uDC1E","n":"Ladybug"},
+      {"v":"\uD83E\uDD85","n":"Eagle"},{"v":"\uD83E\uDD89","n":"Owl"},
+      {"v":"\uD83E\uDD8A","n":"Fox"},{"v":"\uD83D\uDC3B","n":"Bear"},
+      {"v":"\uD83E\uDD9D","n":"Raccoon"},{"v":"\uD83D\uDC10","n":"Goat"},
+      {"v":"\uD83D\uDC11","n":"Sheep"},{"v":"\uD83E\uDD83","n":"Turkey"},
+      {"v":"\uD83D\uDC07","n":"Bunny"},{"v":"\uD83E\uDD8E","n":"Lizard"}
     ]
   },
   {
-    "id": "colors", "label": "Car Colors", "emoji": "\uD83C\uDFA8",
-    "type": "emoji", "accent": "#9333EA", "accent2": "#7E22CE", "cellBg": "#FAF5FF",
-    "hint": "Emoji shown on the board",
-    "items": [
-      {"v": "\uD83D\uDD34", "n": "Red"},         {"v": "\uD83D\uDD35", "n": "Blue"},
-      {"v": "\u26AA",       "n": "White"},        {"v": "\u26AB",       "n": "Black"},
-      {"v": "\uD83E\uDEB6", "n": "Silver"},       {"v": "\uD83D\uDFEB", "n": "Brown"},
-      {"v": "\uD83D\uDFE2", "n": "Green"},        {"v": "\uD83D\uDFE1", "n": "Yellow"},
-      {"v": "\uD83D\uDFE0", "n": "Orange"},       {"v": "\uD83D\uDFE3", "n": "Purple"},
-      {"v": "\uD83E\uDEF7", "n": "Pink"},         {"v": "\u2728",       "n": "Gold"},
-      {"v": "\uD83E\uDEB5", "n": "Teal"},         {"v": "\u2764\uFE0F", "n": "Maroon"},
-      {"v": "\uD83D\uDC9A", "n": "Lime"},         {"v": "\uD83D\uDC99", "n": "Navy"},
-      {"v": "\uD83E\uDDE1", "n": "Rust"},         {"v": "\uD83E\uDE99", "n": "Copper"},
-      {"v": "\uD83C\uDF08", "n": "Two-Tone"},     {"v": "\uD83D\uDDA4", "n": "Matte"},
-      {"v": "\uD83C\uDFA8", "n": "Wrapped"},      {"v": "\uD83C\uDF1F", "n": "Pearl"},
-      {"v": "\uD83D\uDC9C", "n": "Violet"},       {"v": "\uD83E\uDD0D", "n": "Cream"},
-      {"v": "\uD83D\uDC9B", "n": "Mustard"},      {"v": "\uD83D\uDC9E", "n": "Rose"},
-      {"v": "\uD83D\uDCA5", "n": "Neon"},         {"v": "\uD83D\uDD31", "n": "Chrome"}
+    "id":"colors","label":"Car Colors","emoji":"\uD83C\uDFA8",
+    "type":"emoji","accent":"#9333EA","accent2":"#7E22CE","cellBg":"#FAF5FF",
+    "items":[
+      {"v":"\uD83D\uDD34","n":"Red"},{"v":"\uD83D\uDD35","n":"Blue"},
+      {"v":"\u26AA","n":"White"},{"v":"\u26AB","n":"Black"},
+      {"v":"\uD83E\uDEB6","n":"Silver"},{"v":"\uD83D\uDFEB","n":"Brown"},
+      {"v":"\uD83D\uDFE2","n":"Green"},{"v":"\uD83D\uDFE1","n":"Yellow"},
+      {"v":"\uD83D\uDFE0","n":"Orange"},{"v":"\uD83D\uDFE3","n":"Purple"},
+      {"v":"\uD83E\uDEF7","n":"Pink"},{"v":"\u2728","n":"Gold"},
+      {"v":"\uD83E\uDEB5","n":"Teal"},{"v":"\u2764\uFE0F","n":"Maroon"},
+      {"v":"\uD83D\uDC9A","n":"Lime"},{"v":"\uD83D\uDC99","n":"Navy"},
+      {"v":"\uD83E\uDDE1","n":"Rust"},{"v":"\uD83E\uDE99","n":"Copper"},
+      {"v":"\uD83C\uDF08","n":"Two-Tone"},{"v":"\uD83D\uDDA4","n":"Matte"},
+      {"v":"\uD83C\uDFA8","n":"Wrapped"},{"v":"\uD83C\uDF1F","n":"Pearl"},
+      {"v":"\uD83D\uDC9C","n":"Violet"},{"v":"\uD83E\uDD0D","n":"Cream"},
+      {"v":"\uD83D\uDC9B","n":"Mustard"},{"v":"\uD83D\uDC9E","n":"Rose"},
+      {"v":"\uD83D\uDCA5","n":"Neon"},{"v":"\uD83D\uDD31","n":"Chrome"}
     ]
   },
   {
-    "id": "signs", "label": "Road Signs", "emoji": "\uD83D\uDEA6",
-    "type": "emoji", "accent": "#D97706", "accent2": "#B45309", "cellBg": "#FFFBEB",
-    "hint": "Emoji shown on the board",
-    "items": [
-      {"v": "\uD83D\uDED1", "n": "Stop"},         {"v": "\uD83D\uDEA6", "n": "Traffic Light"},
-      {"v": "\u26FD",       "n": "Gas Station"},  {"v": "\uD83C\uDF09", "n": "Bridge"},
-      {"v": "\uD83D\uDE82", "n": "Railroad"},     {"v": "\u26A0\uFE0F", "n": "Yield"},
-      {"v": "\uD83C\uDD7F\uFE0F", "n": "Parking"},{"v": "\uD83C\uDFE5", "n": "Hospital"},
-      {"v": "\uD83C\uDFEB", "n": "School"},       {"v": "\uD83D\uDCCD", "n": "Mile Marker"},
-      {"v": "\uD83D\uDCB3", "n": "Toll Booth"},   {"v": "\uD83D\uDC4B", "n": "Welcome"},
-      {"v": "\u27A1\uFE0F", "n": "One Way"},      {"v": "\uD83D\uDD00", "n": "Merge"},
-      {"v": "\uD83E\uDD8C", "n": "Deer X-ing"},   {"v": "\uD83D\uDE9B", "n": "Truck Route"},
-      {"v": "\uD83D\uDEB2", "n": "Bike Lane"},    {"v": "\uD83D\uDDFC", "n": "Water Tower"},
-      {"v": "\u26EA",       "n": "Church"},       {"v": "\uD83C\uDF32", "n": "Forest"},
-      {"v": "\uD83C\uDF3E", "n": "Farmland"},     {"v": "\u26F0\uFE0F", "n": "Mountain"},
-      {"v": "\uD83C\uDFD7\uFE0F", "n": "Construction"}, {"v": "\uD83D\uDE9C", "n": "Semi Truck"},
-      {"v": "\uD83C\uDFD9\uFE0F", "n": "Skyline"},{"v": "\uD83D\uDEAA", "n": "Exit Sign"},
-      {"v": "\uD83D\uDC2E", "n": "Cow Field"},    {"v": "\uD83D\uDD26", "n": "Tunnel"}
+    "id":"signs","label":"Road Signs","emoji":"\uD83D\uDEA6",
+    "type":"emoji","accent":"#D97706","accent2":"#B45309","cellBg":"#FFFBEB",
+    "items":[
+      {"v":"\uD83D\uDED1","n":"Stop"},{"v":"\uD83D\uDEA6","n":"Traffic Light"},
+      {"v":"\u26FD","n":"Gas Station"},{"v":"\uD83C\uDF09","n":"Bridge"},
+      {"v":"\uD83D\uDE82","n":"Railroad"},{"v":"\u26A0\uFE0F","n":"Yield"},
+      {"v":"\uD83C\uDD7F\uFE0F","n":"Parking"},{"v":"\uD83C\uDFE5","n":"Hospital"},
+      {"v":"\uD83C\uDFEB","n":"School"},{"v":"\uD83D\uDCCD","n":"Mile Marker"},
+      {"v":"\uD83D\uDCB3","n":"Toll"},{"v":"\uD83D\uDC4B","n":"Welcome Sign"},
+      {"v":"\u27A1\uFE0F","n":"One Way"},{"v":"\uD83D\uDD00","n":"Merge"},
+      {"v":"\uD83E\uDD8C","n":"Deer X-ing"},{"v":"\uD83D\uDE9B","n":"Truck Route"},
+      {"v":"\uD83D\uDEB2","n":"Bike Lane"},{"v":"\uD83D\uDDFC","n":"Water Tower"},
+      {"v":"\u26EA","n":"Church"},{"v":"\uD83C\uDF32","n":"Forest"},
+      {"v":"\uD83C\uDF3E","n":"Farmland"},{"v":"\u26F0\uFE0F","n":"Mountain"},
+      {"v":"\uD83C\uDFD7\uFE0F","n":"Construction"},{"v":"\uD83D\uDE9C","n":"Semi Truck"},
+      {"v":"\uD83C\uDFD9\uFE0F","n":"Skyline"},{"v":"\uD83D\uDEAA","n":"Exit Sign"},
+      {"v":"\uD83D\uDC2E","n":"Cow Field"},{"v":"\uD83D\uDD26","n":"Tunnel"}
     ]
   },
   {
-    "id": "custom", "label": "Custom", "emoji": "\u270F\uFE0F",
-    "type": "emoji", "accent": "#0891B2", "accent2": "#0E7490", "cellBg": "#F0FDFF",
-    "hint": "Emoji shown on the board",
-    "items": [
-      {"v": "\uD83C\uDF1F", "n": "Item 1"},
-      {"v": "\uD83C\uDF88", "n": "Item 2"},
-      {"v": "\uD83C\uDF08", "n": "Item 3"}
+    "id":"custom","label":"Custom","emoji":"\u270F\uFE0F",
+    "type":"emoji","accent":"#0891B2","accent2":"#0E7490","cellBg":"#ECFEFF",
+    "items":[
+      {"v":"\uD83C\uDF1F","n":"Item 1"},
+      {"v":"\uD83C\uDF88","n":"Item 2"},
+      {"v":"\uD83C\uDF08","n":"Item 3"}
     ]
   }
 ]
 </script>
 
-<!-- ── APP LOGIC ─────────────────────────────────────── -->
 <script>
-var CATS     = JSON.parse(document.getElementById('catData').textContent);
+// ── STATE ──────────────────────────────────────────────
+var CATS       = JSON.parse(document.getElementById('catData').textContent);
 var activeCat  = CATS[0];
-var editItems  = [];       // items being edited in settings
-var boardItems = [];       // resolved items currently on the board [{n, type:'img'|'emoji', src}]
-var board      = [];       // 25 slots, index 12 = FREE (null)
-var stamped    = new Set([12]);
-var logoCache  = {};       // domain -> dataURL
+var editItems  = [];
+var boardItems = [];   // resolved [{n, type:'img'|'emoji', src}]
+var board      = [];   // COLS*ROWS slots, free = null
+var stamped    = new Set();
+var logoCache  = {};
+var COLS       = 3;    // set by calcLayout()
+var ROWS       = 6;
+var TOTAL      = COLS * ROWS; // cells on board (one is FREE)
+
+// ── LAYOUT DETECTION ──────────────────────────────────
+function calcLayout() {
+  var w = window.innerWidth;
+  if (w >= 640)      { COLS = 5; ROWS = 5; }
+  else if (w >= 420) { COLS = 4; ROWS = 6; }
+  else               { COLS = 3; ROWS = 6; }
+  TOTAL = COLS * ROWS;
+  document.documentElement.style.setProperty('--cols', COLS);
+}
 
 // ── THEME ──────────────────────────────────────────────
 function applyTheme(cat) {
-  document.documentElement.style.setProperty('--accent',   cat.accent);
-  document.documentElement.style.setProperty('--accent2',  cat.accent2);
-  document.documentElement.style.setProperty('--cell-bg',  cat.cellBg);
+  document.documentElement.style.setProperty('--accent',  cat.accent);
+  document.documentElement.style.setProperty('--accent2', cat.accent2);
+  document.documentElement.style.setProperty('--cell-bg', cat.cellBg);
 }
 
-// ── CATEGORY STRIP ─────────────────────────────────────
-function buildCatStrip() {
-  var strip = document.getElementById('catStrip');
-  strip.innerHTML = '';
-  CATS.forEach(function(cat) {
-    var p = document.createElement('button');
-    p.className = 'cat-pill' + (cat.id === activeCat.id ? ' active' : '');
-    p.setAttribute('data-id', cat.id);
-    p.textContent = cat.emoji + ' ' + cat.label;
-    p.onclick = function() { switchCat(cat.id); };
-    strip.appendChild(p);
-  });
-}
+// ── BOOT ──────────────────────────────────────────────
+calcLayout();
+applyTheme(activeCat);
+document.getElementById('headerCat').textContent = activeCat.emoji + ' ' + activeCat.label;
+buildCatGrid();
+loadAndRender();
 
-function switchCat(id) {
-  activeCat = CATS.find(function(c) { return c.id === id; });
-  applyTheme(activeCat);
-  document.querySelectorAll('.cat-pill').forEach(function(p) {
-    p.classList.toggle('active', p.getAttribute('data-id') === id);
-  });
-  loadAndRender();
-}
+window.addEventListener('resize', function() {
+  var prev = COLS;
+  calcLayout();
+  if (COLS !== prev) loadAndRender();
+});
 
-// ── LOAD + RENDER BOARD ────────────────────────────────
+// ── LOAD + RESOLVE ITEMS ──────────────────────────────
 async function loadAndRender() {
   var cat = activeCat;
-  var pool = cat.items;
-  stamped = new Set([12]);
+  stamped = new Set();
   document.getElementById('winBanner').classList.remove('show');
 
-  // Resolve items — fetch favicons if needed
   var resolved = [];
   if (cat.type === 'favicon') {
-    for (var i = 0; i < pool.length; i++) {
-      var item = pool[i];
-      var src = logoCache[item.v];
-      if (!src) {
-        src = await fetchFavicon(item.v);
-        logoCache[item.v] = src || '';
+    for (var i = 0; i < cat.items.length; i++) {
+      var item = cat.items[i];
+      if (logoCache[item.v] === undefined) {
+        logoCache[item.v] = await fetchFavicon(item.v);
       }
-      resolved.push({n: item.n, type: 'img', src: src || ''});
+      resolved.push({n: item.n, type: 'img', src: logoCache[item.v] || ''});
     }
   } else {
-    pool.forEach(function(item) {
+    cat.items.forEach(function(item) {
       resolved.push({n: item.n, type: 'emoji', src: item.v});
     });
   }
 
   boardItems = resolved;
-  newBoard();
+  dealBoard();
 }
 
-function newBoard() {
-  stamped = new Set([12]);
+// ── DEAL BOARD ────────────────────────────────────────
+function dealBoard() {
+  stamped = new Set();
   document.getElementById('winBanner').classList.remove('show');
-  var pool = shuffle(boardItems).slice(0, 24);
-  board = pool.slice(0, 12).concat([null]).concat(pool.slice(12, 24));
+  var needed = TOTAL - 1; // one slot is FREE
+  var pool = shuffle(boardItems).slice(0, needed);
+  var freeIdx = Math.floor(TOTAL / 2); // center-ish free space
+  board = [];
+  var poolIdx = 0;
+  for (var i = 0; i < TOTAL; i++) {
+    if (i === freeIdx) { board.push(null); stamped.add(i); }
+    else { board.push(pool[poolIdx++]); }
+  }
   renderBoard();
-  updateScore();
+  renderScore();
 }
 
+function newBoard()    { dealBoard(); }
 function clearStamps() {
-  stamped = new Set([12]);
+  var freeIdx = board.indexOf(null);
+  stamped = new Set([freeIdx]);
   document.getElementById('winBanner').classList.remove('show');
   renderBoard();
-  updateScore();
+  renderScore();
 }
 
-// ── RENDER ─────────────────────────────────────────────
+// ── RENDER BOARD ──────────────────────────────────────
 function renderBoard() {
   var el = document.getElementById('board');
   el.innerHTML = '';
   board.forEach(function(item, i) {
     var cell = document.createElement('div');
-    var cls = 'cell';
-    if (i === 12) cls += ' is-free';
-    if (stamped.has(i)) cls += ' is-stamped';
-    cell.className = cls;
+    var isFree = (item === null);
+    var isStamped = stamped.has(i);
+    cell.className = 'cell' + (isFree ? ' is-free' : '') + (isStamped ? ' is-stamped' : '');
     cell.setAttribute('data-i', String(i));
 
-    if (i === 12) {
+    if (isFree) {
       cell.innerHTML =
         '<div class="cell-img"><span class="em">&#x2B50;</span></div>' +
         '<div class="cell-name">FREE!</div>';
@@ -869,49 +710,87 @@ function renderBoard() {
       var imgHtml = item.type === 'emoji'
         ? '<span class="em">' + item.src + '</span>'
         : (item.src
-            ? '<img src="' + item.src + '" alt="' + eh(item.n) + '">'
-            : '<span class="em" style="font-size:.52rem;font-weight:800;color:#A8A29E;font-family:\'Baloo 2\',cursive">' + eh(item.n) + '</span>');
-      var stampHtml = stamped.has(i)
+            ? '<img src="' + item.src + '" alt="' + eh(item.n) + '" loading="lazy">'
+            : '<span style="font-size:.6rem;font-weight:800;color:#A8A29E;font-family:\'Baloo 2\',cursive;text-align:center;line-height:1.2">' + eh(item.n) + '</span>');
+      var stampHtml = isStamped
         ? '<div class="stamp-overlay"><div class="stamp-circle"><span class="stamp-mark">&#x2713;</span></div></div>'
         : '';
       cell.innerHTML =
         '<div class="cell-img">' + imgHtml + '</div>' +
         '<div class="cell-name">' + eh(item.n) + '</div>' +
         stampHtml;
-      cell.addEventListener('click', function() { tap(parseInt(cell.getAttribute('data-i'))); });
+      cell.addEventListener('click', (function(idx) {
+        return function() { tap(idx); };
+      })(i));
     }
     el.appendChild(cell);
   });
 }
 
 function tap(i) {
-  if (i === 12) return;
+  if (board[i] === null) return;
   if (stamped.has(i)) { stamped.delete(i); } else { stamped.add(i); }
   renderBoard();
-  updateScore();
+  renderScore();
   checkWin();
 }
 
-// ── SCORE ───────────────────────────────────────────────
-function updateScore() {
-  var found = stamped.size - 1;
-  document.getElementById('scoreLabel').textContent = found + ' of 24 found';
-  var pips = document.getElementById('scorePips');
-  pips.innerHTML = '';
-  for (var i = 0; i < 24; i++) {
+// ── SCORE + PIPS ──────────────────────────────────────
+function renderScore() {
+  var freeIdx = board.indexOf(null);
+  var found = stamped.size - (stamped.has(freeIdx) ? 1 : 0);
+  var total = TOTAL - 1;
+  document.getElementById('scoreLabel').textContent = found + ' of ' + total + ' found';
+
+  // Pip grid: make it as square as possible
+  // e.g. 17 items → 3 cols of 6 rows, or pick cols that divide evenly
+  var pipCount = total;
+  var pipCols  = Math.ceil(Math.sqrt(pipCount));
+  // nudge to a "nice" number
+  if (pipCols < 4) pipCols = 4;
+  if (pipCols > 8) pipCols = 8;
+
+  var grid = document.getElementById('pipGrid');
+  grid.style.gridTemplateColumns = 'repeat(' + pipCols + ', 9px)';
+  grid.innerHTML = '';
+
+  var pipIdx = 0;
+  board.forEach(function(item, i) {
+    if (item === null) return; // skip FREE
     var pip = document.createElement('div');
-    pip.className = 'pip' + (i < found ? ' lit' : '');
-    pips.appendChild(pip);
-  }
+    var lit = stamped.has(i);
+    pip.className = 'pip' + (lit ? ' lit' : '');
+    grid.appendChild(pip);
+    pipIdx++;
+  });
 }
 
-// ── WIN ────────────────────────────────────────────────
+// ── WIN CHECK ─────────────────────────────────────────
 function checkWin() {
-  var lines = [
-    [0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],
-    [0,5,10,15,20],[1,6,11,16,21],[2,7,12,17,22],[3,8,13,18,23],[4,9,14,19,24],
-    [0,6,12,18,24],[4,8,12,16,20]
-  ];
+  // Build lines dynamically for any COLS×ROWS grid
+  var lines = [];
+  // Rows
+  for (var r = 0; r < ROWS; r++) {
+    var row = [];
+    for (var c = 0; c < COLS; c++) row.push(r * COLS + c);
+    lines.push(row);
+  }
+  // Cols
+  for (var c = 0; c < COLS; c++) {
+    var col = [];
+    for (var r = 0; r < ROWS; r++) col.push(r * COLS + c);
+    lines.push(col);
+  }
+  // Diagonals (only if square)
+  if (COLS === ROWS) {
+    var d1 = [], d2 = [];
+    for (var k = 0; k < COLS; k++) {
+      d1.push(k * COLS + k);
+      d2.push(k * COLS + (COLS - 1 - k));
+    }
+    lines.push(d1); lines.push(d2);
+  }
+
   var won = false;
   lines.forEach(function(line) {
     if (line.every(function(i) { return stamped.has(i); })) {
@@ -924,22 +803,23 @@ function checkWin() {
   });
   if (won) {
     document.getElementById('winBanner').classList.add('show');
-    confetti();
+    boom();
   }
 }
 
-// ── SETTINGS PANEL ─────────────────────────────────────
+// ── SETTINGS ──────────────────────────────────────────
 function openSettings() {
   editItems = activeCat.items.map(function(i) { return {v: i.v, n: i.n}; });
   buildCatGrid();
   renderItemList();
+  document.getElementById('loadingWrap').classList.remove('show');
+  document.getElementById('applyBtn').disabled = false;
   document.getElementById('settingsOverlay').classList.add('open');
 }
 
 function maybeClose(e) {
   if (e.target === document.getElementById('settingsOverlay')) closeSettings();
 }
-
 function closeSettings() {
   document.getElementById('settingsOverlay').classList.remove('open');
 }
@@ -1001,64 +881,59 @@ function addItem() {
 function deleteItem(i) { editItems.splice(i, 1); renderItemList(); }
 
 function updateCount() {
-  var note = document.getElementById('countNote');
+  var hint = document.getElementById('countHint');
   var n = editItems.length;
-  note.textContent = '(' + n + ' items' + (n < 24 ? ' — need ' + (24 - n) + ' more' : '') + ')';
-  note.className = 'count-note' + (n < 24 ? ' warn' : '');
+  var needed = TOTAL - 1;
+  hint.textContent = n + ' items' + (n < needed ? ' \u2014 need ' + (needed - n) + ' more for this board size' : '');
+  hint.className = 'count-hint' + (n < needed ? ' warn' : '');
 }
 
-async function applySettings() {
-  if (editItems.length < 24) {
-    alert('Need at least 24 items for a full board. Add ' + (24 - editItems.length) + ' more.');
+async function applyAndClose() {
+  var needed = TOTAL - 1;
+  if (editItems.length < needed) {
+    alert('Need at least ' + needed + ' items for this board size. Add ' + (needed - editItems.length) + ' more.');
     return;
   }
-  // Commit edits back to the active category
   activeCat.items = editItems.map(function(i) { return {v: i.v, n: i.n}; });
 
   var btn = document.getElementById('applyBtn');
   btn.disabled = true;
-  setLoading(true, 0, '');
 
   var isFav = activeCat.type === 'favicon';
   if (isFav) {
-    // Fetch any uncached logos
-    var uncached = activeCat.items.filter(function(item) { return logoCache[item.v] === undefined; });
-    for (var i = 0; i < uncached.length; i++) {
-      var pct = Math.round(((i + 1) / uncached.length) * 100);
-      setLoading(true, pct, 'Fetching ' + uncached[i].n + '...');
-      var src = await fetchFavicon(uncached[i].v);
-      logoCache[uncached[i].v] = src || '';
+    var uncached = activeCat.items.filter(function(i) { return logoCache[i.v] === undefined; });
+    if (uncached.length > 0) {
+      document.getElementById('loadingWrap').classList.add('show');
+      for (var i = 0; i < uncached.length; i++) {
+        document.getElementById('loadingFill').style.width = Math.round(((i+1)/uncached.length)*100) + '%';
+        document.getElementById('loadingText').textContent = 'Fetching ' + uncached[i].n + '...';
+        logoCache[uncached[i].v] = await fetchFavicon(uncached[i].v);
+      }
+      document.getElementById('loadingWrap').classList.remove('show');
     }
   }
 
-  setLoading(false, 100, '');
   btn.disabled = false;
-  closeSettings();
-
-  // Update strip & theme, reload board
   applyTheme(activeCat);
-  buildCatStrip();
+  document.getElementById('headerCat').textContent = activeCat.emoji + ' ' + activeCat.label;
+  closeSettings();
   await loadAndRender();
 }
 
-function setLoading(show, pct, msg) {
-  document.getElementById('loadingBar').classList.toggle('show', show);
-  document.getElementById('loadingFill').style.width = pct + '%';
-  document.getElementById('loadingLabel').textContent = msg;
-}
-
-// ── FAVICON FETCH ──────────────────────────────────────
+// ── FAVICON FETCH ─────────────────────────────────────
+// DuckDuckGo first (faster, less likely to return a placeholder),
+// favicon.im as fallback
 async function fetchFavicon(domain) {
   var services = [
-    'https://favicon.im/' + domain + '?larger=true',
-    'https://icons.duckduckgo.com/ip3/' + domain + '.ico'
+    'https://icons.duckduckgo.com/ip3/' + domain + '.ico',
+    'https://favicon.im/' + domain + '?larger=true'
   ];
   for (var i = 0; i < services.length; i++) {
     try {
       var resp = await fetch(services[i]);
       if (!resp.ok) continue;
       var blob = await resp.blob();
-      if (blob.size < 200) continue;
+      if (blob.size < 150) continue; // skip tiny placeholder
       var dataUrl = await blobToDataUrl(blob);
       if (dataUrl) return dataUrl;
     } catch(e) { continue; }
@@ -1075,8 +950,8 @@ function blobToDataUrl(blob) {
   });
 }
 
-// ── CONFETTI ───────────────────────────────────────────
-function confetti() {
+// ── CONFETTI ──────────────────────────────────────────
+function boom() {
   var colors = ['#EF4444','#F97316','#FCD34D','#22C55E','#3B82F6','#A855F7'];
   for (var i = 0; i < 55; i++) {
     var el = document.createElement('div');
@@ -1093,7 +968,7 @@ function confetti() {
   }
 }
 
-// ── UTILS ──────────────────────────────────────────────
+// ── UTILS ─────────────────────────────────────────────
 function shuffle(arr) {
   var a = arr.slice();
   for (var i = a.length - 1; i > 0; i--) {
@@ -1105,16 +980,9 @@ function shuffle(arr) {
 
 function eh(s) {
   return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-// ── BOOT ───────────────────────────────────────────────
-applyTheme(activeCat);
-buildCatStrip();
-loadAndRender();
 </script>
 </body>
 </html>
