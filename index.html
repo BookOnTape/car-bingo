@@ -3,107 +3,834 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Logo Tester (img tags)</title>
+<title>🎉 Road Trip Bingo Maker</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-body { font-family: system-ui, sans-serif; background: #f8f8f6; color: #1c1917; padding: 20px; max-width: 900px; margin: 0 auto; }
-h1 { font-size: 1.3rem; margin-bottom: 4px; }
-p  { font-size: .85rem; color: #78716c; margin-bottom: 20px; }
-.service-block { margin-bottom: 36px; }
-.service-name {
-  font-size: .75rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .8px; color: #78716c;
-  margin-bottom: 10px; padding-bottom: 6px;
-  border-bottom: 2px solid #e7e3dc;
-  display: flex; align-items: center; gap: 10px;
+:root {
+  --ink: #1E293B;
+  --muted: #64748B;
+  --card: #FFFFFF;
+  --radius: 18px;
 }
-.service-url { font-weight: 400; text-transform: none; letter-spacing: 0; font-size: .72rem; color: #a8a29e; }
-.service-status { margin-left: auto; font-size: .72rem; font-weight: 700; }
-.logo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: #F0F9FF;
+  color: var(--ink);
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+/* ── HEADER ── */
+.hero {
+  background: linear-gradient(135deg, #1E293B 0%, #0F4C81 100%);
+  padding: 36px 20px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '🚗 🚙 🛻 🚕 🚌 🏎️';
+  position: absolute; top: 8px; left: 0; right: 0;
+  font-size: 1.4rem; letter-spacing: 12px;
+  opacity: 0.18; white-space: nowrap; overflow: hidden;
+}
+.hero h1 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2rem, 6vw, 3rem);
+  color: #FDE68A;
+  text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+  position: relative;
+}
+.hero p {
+  color: #BAE6FD;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-top: 6px;
+  position: relative;
+}
+
+.main { max-width: 680px; margin: 0 auto; padding: 28px 16px 0; }
+
+/* ── SECTION CARDS ── */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 0 #E2E8F0;
+  border: 2px solid #E2E8F0;
+}
+.card-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.15rem;
+  color: var(--ink);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
   gap: 8px;
 }
-.logo-cell {
-  background: white;
-  border: 1.5px solid #e7e3dc;
+.card-title span { font-size: 1.3rem; }
+
+/* ── CATEGORY PICKER ── */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+.cat-btn {
+  border: 2.5px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 12px 8px;
+  background: #F8FAFF;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: #475569;
+  position: relative;
+}
+.cat-btn .cat-emoji { font-size: 1.8rem; display: block; margin-bottom: 4px; }
+.cat-btn:hover { border-color: #7DD3FC; background: #F0F9FF; }
+.cat-btn.active {
+  border-color: #3B82F6;
+  background: #EFF6FF;
+  color: #1D4ED8;
+  box-shadow: 0 0 0 3px #BFDBFE;
+}
+.cat-btn .cat-check {
+  position: absolute; top: 6px; right: 8px;
+  font-size: 0.75rem; color: #3B82F6;
+  display: none;
+}
+.cat-btn.active .cat-check { display: block; }
+
+/* ── ITEM LIST ── */
+.item-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.item-row {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.item-emoji-input, .item-name-input {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  border: 2px solid #E2E8F0;
   border-radius: 10px;
-  padding: 8px 6px 6px;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 5px; min-height: 84px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+  background: #FAFAFA;
 }
-.logo-cell img {
-  width: 44px; height: 44px;
-  object-fit: contain; display: block;
+.item-emoji-input { text-align: center; font-size: 1.2rem; padding: 6px 4px; }
+.item-emoji-input:focus, .item-name-input:focus { border-color: #7DD3FC; background: white; }
+.del-btn {
+  width: 32px; height: 32px;
+  background: #FEE2E2; border: none; border-radius: 8px;
+  color: #DC2626; font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background 0.12s;
 }
-.logo-cell .name {
-  font-size: .62rem; font-weight: 700;
-  text-align: center; color: #57534e; line-height: 1.2;
+.del-btn:hover { background: #FECACA; }
+.add-item-btn {
+  width: 100%;
+  background: #F0FDF4;
+  border: 2px dashed #4ADE80;
+  color: #15803D;
+  border-radius: 10px;
+  padding: 9px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.12s;
 }
-.run-btn {
-  background: #dc2626; color: white;
-  border: none; border-radius: 8px;
-  padding: 10px 24px; font-size: .95rem; font-weight: 700;
-  cursor: pointer; margin-bottom: 24px;
+.add-item-btn:hover { background: #DCFCE7; }
+
+.item-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+  line-height: 1.4;
 }
+
+/* ── OPTIONS ── */
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.opt-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--muted);
+  margin-bottom: 5px;
+  display: block;
+}
+.opt-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid #E2E8F0;
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  outline: none;
+  transition: border-color 0.15s;
+  background: #FAFAFA;
+}
+.opt-input:focus { border-color: #7DD3FC; background: white; }
+
+/* ── BUILD BUTTON ── */
+.build-section { text-align: center; }
+.build-btn {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.2rem;
+  padding: 16px 48px;
+  background: linear-gradient(135deg, #F97316, #EF4444);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #B91C1C, 0 8px 20px rgba(239,68,68,0.3);
+  transition: transform 0.12s, box-shadow 0.12s;
+  letter-spacing: 0.5px;
+}
+.build-btn:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #B91C1C, 0 10px 24px rgba(239,68,68,0.35); }
+.build-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #B91C1C; }
+.build-btn:disabled { background: #94A3B8; box-shadow: 0 5px 0 #64748B; transform: none; cursor: default; }
+
+/* ── PROGRESS ── */
+.progress-section { display: none; margin-top: 18px; }
+.bar-bg { background: #E2E8F0; border-radius: 99px; height: 14px; overflow: hidden; margin-bottom: 8px; }
+.bar-fill { background: linear-gradient(90deg, #22C55E, #16A34A); height: 100%; border-radius: 99px; width: 0%; transition: width 0.3s; }
+.prog-status { font-size: 0.88rem; font-weight: 700; color: var(--muted); text-align: center; }
+
+/* ── DONE ── */
+.done-section {
+  display: none; margin-top: 18px;
+  background: #F0FDF4; border: 2px solid #4ADE80;
+  border-radius: var(--radius); padding: 20px 22px; text-align: center;
+}
+.done-section h2 { font-family: 'Fredoka One', cursive; color: #15803D; font-size: 1.3rem; margin-bottom: 6px; }
+.done-section p { color: #166534; font-size: 0.88rem; margin-bottom: 14px; }
+.download-btn {
+  display: inline-block;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.05rem;
+  padding: 12px 32px;
+  background: #16A34A;
+  color: white;
+  border-radius: 50px;
+  text-decoration: none;
+  box-shadow: 0 4px 0 #166534;
+  transition: transform 0.12s;
+}
+.download-btn:hover { transform: translateY(-2px); }
+
+.count-badge {
+  display: inline-block;
+  background: #DBEAFE; color: #1D4ED8;
+  border-radius: 99px; padding: 2px 10px;
+  font-size: 0.78rem; font-weight: 800;
+  margin-left: 8px; vertical-align: middle;
+}
+.count-badge.warn { background: #FEE2E2; color: #DC2626; }
 </style>
 </head>
 <body>
 
-<h1>&#x1F50D; Logo Tester (plain &lt;img&gt; tags)</h1>
-<p>This version uses plain <strong>&lt;img src&gt;</strong> tags instead of fetch() &mdash; which sidesteps the CORS restriction entirely. The browser displays the logo directly without JavaScript reading the bytes. Each service is shown below; just look at which ones display real logos.</p>
+<div class="hero">
+  <h1>🎉 Road Trip Bingo Maker</h1>
+  <p>Pick a category, customize your items, and build a printable offline game!</p>
+</div>
 
-<div id="results"></div>
+<div class="main">
+
+  <!-- STEP 1: CATEGORY -->
+  <div class="card">
+    <div class="card-title"><span>1️⃣</span> Choose a Category</div>
+    <div class="category-grid" id="categoryGrid"></div>
+  </div>
+
+  <!-- STEP 2: ITEMS -->
+  <div class="card">
+    <div class="card-title">
+      <span>2️⃣</span> Edit Your Items
+      <span class="count-badge" id="countBadge">0 items</span>
+    </div>
+    <p class="item-hint" id="itemHint"></p>
+    <div class="item-list" id="itemList"></div>
+    <button class="add-item-btn" onclick="addItem()">+ Add Item</button>
+  </div>
+
+  <!-- STEP 3: OPTIONS -->
+  <div class="card">
+    <div class="card-title"><span>3️⃣</span> Options</div>
+    <div class="options-grid">
+      <div>
+        <label class="opt-label">Game Title</label>
+        <input class="opt-input" id="gameTitle" value="Road Trip Bingo!">
+      </div>
+      <div>
+        <label class="opt-label">Free Space Label</label>
+        <input class="opt-input" id="freeLabel" value="FREE!">
+      </div>
+    </div>
+  </div>
+
+  <!-- BUILD -->
+  <div class="build-section">
+    <button class="build-btn" id="buildBtn" onclick="buildGame()">🚀 Build My Bingo Game!</button>
+    <div class="progress-section" id="progressSection">
+      <div class="bar-bg"><div class="bar-fill" id="barFill"></div></div>
+      <div class="prog-status" id="progStatus">Starting…</div>
+    </div>
+    <div class="done-section" id="doneSection">
+      <h2>🎉 Your game is ready!</h2>
+      <p>Save the file below — open it any time in any browser, no internet needed. Scramble &amp; print as many boards as you like!</p>
+      <a class="download-btn" id="dlLink" download="bingo-game.html">💾 Save Bingo Game</a>
+    </div>
+  </div>
+
+</div><!-- /main -->
 
 <script>
-var BRANDS = [
-  {v:'toyota.com',n:'Toyota'},{v:'honda.com',n:'Honda'},{v:'ford.com',n:'Ford'},
-  {v:'chevrolet.com',n:'Chevy'},{v:'dodge.com',n:'Dodge'},{v:'jeep.com',n:'Jeep'},
-  {v:'nissanusa.com',n:'Nissan'},{v:'hyundaiusa.com',n:'Hyundai'},{v:'kia.com',n:'Kia'},
-  {v:'subaru.com',n:'Subaru'},{v:'bmwusa.com',n:'BMW'},{v:'tesla.com',n:'Tesla'},
-  {v:'buick.com',n:'Buick'},{v:'gmc.com',n:'GMC'},{v:'mazdausa.com',n:'Mazda'},
-  {v:'vw.com',n:'VW'},{v:'volvocars.com',n:'Volvo'},{v:'audiusa.com',n:'Audi'},
-  {v:'lexus.com',n:'Lexus'},{v:'acura.com',n:'Acura'},{v:'mbusa.com',n:'Mercedes'},
-  {v:'porsche.com',n:'Porsche'},{v:'mitsubishicars.com',n:'Mitsubishi'},{v:'lincoln.com',n:'Lincoln'},
-  {v:'infinitiusa.com',n:'Infiniti'},{v:'cadillac.com',n:'Cadillac'},{v:'ramtrucks.com',n:'Ram'},
-  {v:'chrysler.com',n:'Chrysler'}
+// ─────────────────────────────────────────────
+// CATEGORY DEFINITIONS
+// type: 'favicon' = fetch logo from domain
+//       'emoji'   = just display the emoji large (no fetch needed)
+// ─────────────────────────────────────────────
+const CATEGORIES = [
+  {
+    id: 'cars',
+    label: 'Car Brands',
+    emoji: '🚗',
+    type: 'favicon',
+    bg: 'road',
+    hint: 'For car brand logos, enter the brand\'s website domain. The maker will fetch the favicon automatically.',
+    items: [
+      { label: 'Toyota',     value: 'toyota.com' },
+      { label: 'Honda',      value: 'honda.com' },
+      { label: 'Ford',       value: 'ford.com' },
+      { label: 'Chevy',      value: 'chevrolet.com' },
+      { label: 'Dodge',      value: 'dodge.com' },
+      { label: 'Jeep',       value: 'jeep.com' },
+      { label: 'Nissan',     value: 'nissanusa.com' },
+      { label: 'Hyundai',    value: 'hyundaiusa.com' },
+      { label: 'Kia',        value: 'kia.com' },
+      { label: 'Subaru',     value: 'subaru.com' },
+      { label: 'BMW',        value: 'bmwusa.com' },
+      { label: 'Tesla',      value: 'tesla.com' },
+      { label: 'Buick',      value: 'buick.com' },
+      { label: 'GMC',        value: 'gmc.com' },
+      { label: 'Mazda',      value: 'mazdausa.com' },
+      { label: 'VW',         value: 'vw.com' },
+      { label: 'Volvo',      value: 'volvocars.com' },
+      { label: 'Audi',       value: 'audiusa.com' },
+      { label: 'Lexus',      value: 'lexus.com' },
+      { label: 'Acura',      value: 'acura.com' },
+      { label: 'Mercedes',   value: 'mbusa.com' },
+      { label: 'Porsche',    value: 'porsche.com' },
+      { label: 'Mitsubishi', value: 'mitsubishicars.com' },
+      { label: 'Lincoln',    value: 'lincoln.com' },
+      { label: 'Infiniti',   value: 'infinitiusa.com' },
+      { label: 'Cadillac',   value: 'cadillac.com' },
+      { label: 'Ram',        value: 'ramtrucks.com' },
+      { label: 'Chrysler',   value: 'chrysler.com' },
+    ]
+  },
+  {
+    id: 'stores',
+    label: 'Store Brands',
+    emoji: '🛒',
+    type: 'favicon',
+    bg: 'city',
+    hint: 'Enter the store\'s website domain. The maker will fetch its favicon logo automatically.',
+    items: [
+      { label: 'Target',      value: 'target.com' },
+      { label: 'Walmart',     value: 'walmart.com' },
+      { label: 'Costco',      value: 'costco.com' },
+      { label: 'Home Depot',  value: 'homedepot.com' },
+      { label: 'Lowe\'s',    value: 'lowes.com' },
+      { label: 'CVS',         value: 'cvs.com' },
+      { label: 'Walgreens',   value: 'walgreens.com' },
+      { label: 'Starbucks',   value: 'starbucks.com' },
+      { label: 'McDonald\'s', value: 'mcdonalds.com' },
+      { label: 'Chick-fil-A', value: 'chick-fil-a.com' },
+      { label: 'Subway',      value: 'subway.com' },
+      { label: 'Dunkin\'',    value: 'dunkindonuts.com' },
+      { label: 'Wendy\'s',    value: 'wendys.com' },
+      { label: 'Burger King', value: 'bk.com' },
+      { label: 'Taco Bell',   value: 'tacobell.com' },
+      { label: 'Pizza Hut',   value: 'pizzahut.com' },
+      { label: 'Domino\'s',   value: 'dominos.com' },
+      { label: 'Hobby Lobby', value: 'hobbylobby.com' },
+      { label: 'Dollar Tree', value: 'dollartree.com' },
+      { label: 'Best Buy',    value: 'bestbuy.com' },
+      { label: 'TJ Maxx',     value: 'tjmaxx.com' },
+      { label: 'Aldi',        value: 'aldi.us' },
+      { label: 'Trader Joe\'s', value: 'traderjoes.com' },
+      { label: 'Whole Foods', value: 'wholefoodsmarket.com' },
+      { label: 'Sam\'s Club', value: 'samsclub.com' },
+      { label: 'IKEA',        value: 'ikea.com' },
+      { label: 'Petco',       value: 'petco.com' },
+      { label: 'GameStop',    value: 'gamestop.com' },
+    ]
+  },
+  {
+    id: 'animals',
+    label: 'Animals',
+    emoji: '🦁',
+    type: 'emoji',
+    bg: 'safari',
+    hint: 'Choose an emoji and a name for each animal. Big, colorful emojis look great on the board!',
+    items: [
+      { label: 'Dog',         value: '🐶' },
+      { label: 'Cat',         value: '🐱' },
+      { label: 'Cow',         value: '🐮' },
+      { label: 'Horse',       value: '🐴' },
+      { label: 'Pig',         value: '🐷' },
+      { label: 'Chicken',     value: '🐔' },
+      { label: 'Deer',        value: '🦌' },
+      { label: 'Bird',        value: '🐦' },
+      { label: 'Duck',        value: '🦆' },
+      { label: 'Rabbit',      value: '🐰' },
+      { label: 'Squirrel',    value: '🐿️' },
+      { label: 'Turtle',      value: '🐢' },
+      { label: 'Butterfly',   value: '🦋' },
+      { label: 'Bee',         value: '🐝' },
+      { label: 'Frog',        value: '🐸' },
+      { label: 'Fish',        value: '🐟' },
+      { label: 'Snail',       value: '🐌' },
+      { label: 'Ladybug',     value: '🐞' },
+      { label: 'Eagle',       value: '🦅' },
+      { label: 'Owl',         value: '🦉' },
+      { label: 'Fox',         value: '🦊' },
+      { label: 'Bear',        value: '🐻' },
+      { label: 'Raccoon',     value: '🦝' },
+      { label: 'Turkey',      value: '🦃' },
+      { label: 'Goat',        value: '🐐' },
+      { label: 'Sheep',       value: '🐑' },
+      { label: 'Crow',        value: '🐦‍⬛' },
+      { label: 'Dragonfly',   value: '🪲' },
+    ]
+  },
+  {
+    id: 'colors',
+    label: 'Car Colors',
+    emoji: '🎨',
+    type: 'emoji',
+    bg: 'rainbow',
+    hint: 'Each item is a color to spot on a car. The emoji is shown big on the board.',
+    items: [
+      { label: 'Red',         value: '🔴' },
+      { label: 'Blue',        value: '🔵' },
+      { label: 'White',       value: '⚪' },
+      { label: 'Black',       value: '⚫' },
+      { label: 'Silver',      value: '🩶' },
+      { label: 'Gray',        value: '🌫️' },
+      { label: 'Green',       value: '🟢' },
+      { label: 'Yellow',      value: '🟡' },
+      { label: 'Orange',      value: '🟠' },
+      { label: 'Brown',       value: '🟤' },
+      { label: 'Purple',      value: '🟣' },
+      { label: 'Pink',        value: '🩷' },
+      { label: 'Gold',        value: '✨' },
+      { label: 'Tan',         value: '🫙' },
+      { label: 'Teal',        value: '🩵' },
+      { label: 'Maroon',      value: '❤️' },
+      { label: 'Cream',       value: '🤍' },
+      { label: 'Lime',        value: '💚' },
+      { label: 'Navy',        value: '💙' },
+      { label: 'Rust',        value: '🧡' },
+      { label: 'Olive',       value: '🫒' },
+      { label: 'Copper',      value: '🪙' },
+      { label: 'Sky Blue',    value: '🩵' },
+      { label: 'Hot Pink',    value: '💗' },
+      { label: 'Two-Tone',    value: '🎨' },
+      { label: 'Wrap',        value: '🌈' },
+      { label: 'Matte',       value: '🖤' },
+      { label: 'Neon',        value: '💥' },
+    ]
+  },
+  {
+    id: 'signs',
+    label: 'Road Signs',
+    emoji: '🚦',
+    type: 'emoji',
+    bg: 'road',
+    hint: 'Things to spot along the road! Edit emojis and names freely.',
+    items: [
+      { label: 'Stop Sign',    value: '🛑' },
+      { label: 'Traffic Light', value: '🚦' },
+      { label: 'Speed Limit',  value: '🔢' },
+      { label: 'Railroad',     value: '🚂' },
+      { label: 'Yield',        value: '⚠️' },
+      { label: 'Rest Area',    value: '🅿️' },
+      { label: 'Hospital',     value: '🏥' },
+      { label: 'Gas Station',  value: '⛽' },
+      { label: 'Exit Sign',    value: '🚪' },
+      { label: 'Mile Marker',  value: '📍' },
+      { label: 'Bridge',       value: '🌉' },
+      { label: 'Tunnel',       value: '🕳️' },
+      { label: 'Toll Booth',   value: '💳' },
+      { label: 'Welcome Sign', value: '👋' },
+      { label: 'School Zone',  value: '🏫' },
+      { label: 'No U-Turn',    value: '↩️' },
+      { label: 'One Way',      value: '➡️' },
+      { label: 'Merge',        value: '🔀' },
+      { label: 'Curve Ahead',  value: '〽️' },
+      { label: 'Deer X-ing',   value: '🦌' },
+      { label: 'Truck Route',  value: '🚛' },
+      { label: 'Bike Lane',    value: '🚲' },
+      { label: 'Overpass',     value: '🌁' },
+      { label: 'Water Tower',  value: '🗼' },
+      { label: 'Silo',         value: '🏗️' },
+      { label: 'Church',       value: '⛪' },
+      { label: 'Flag',         value: '🚩' },
+      { label: 'Billboard',    value: '🖼️' },
+    ]
+  },
+  {
+    id: 'custom',
+    label: 'Custom!',
+    emoji: '✏️',
+    type: 'emoji',
+    bg: 'sky',
+    hint: 'Build your own category from scratch. Add any emojis and names you like!',
+    items: [
+      { label: 'Item 1', value: '🌟' },
+      { label: 'Item 2', value: '🎈' },
+      { label: 'Item 3', value: '🌈' },
+    ]
+  },
 ];
 
-var SERVICES = [
-  {name:'Google S2 (sz=128)', url:function(d){return 'https://www.google.com/s2/favicons?sz=128&domain='+d;}},
-  {name:'DuckDuckGo',         url:function(d){return 'https://icons.duckduckgo.com/ip3/'+d+'.ico';}},
-  {name:'favicon.im (larger)',url:function(d){return 'https://favicon.im/'+d+'?larger=true';}},
-  {name:'Icon Horse',         url:function(d){return 'https://icon.horse/icon/'+d;}},
-  {name:'Clearbit',           url:function(d){return 'https://logo.clearbit.com/'+d;}}
-];
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let activeCat = CATEGORIES[0];
+let items = []; // [{label, value}]
 
-var results = document.getElementById('results');
-SERVICES.forEach(function(svc) {
-  var block = document.createElement('div');
-  block.className = 'service-block';
-  var header = document.createElement('div');
-  header.className = 'service-name';
-  header.innerHTML = svc.name + ' <span class="service-url">' + svc.url('domain.com') + '</span>';
-  block.appendChild(header);
-  var grid = document.createElement('div');
-  grid.className = 'logo-grid';
-  BRANDS.forEach(function(brand) {
-    var cell = document.createElement('div');
-    cell.className = 'logo-cell';
-    var img = document.createElement('img');
-    img.src = svc.url(brand.v);
-    img.alt = brand.n;
-    img.loading = 'lazy';
-    cell.appendChild(img);
-    var nm = document.createElement('div');
-    nm.className = 'name';
-    nm.textContent = brand.n;
-    cell.appendChild(nm);
-    grid.appendChild(cell);
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+function init() {
+  // Build category buttons
+  const grid = document.getElementById('categoryGrid');
+  CATEGORIES.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn' + (cat.id === activeCat.id ? ' active' : '');
+    btn.dataset.id = cat.id;
+    btn.innerHTML = `<span class="cat-emoji">${cat.emoji}</span>${cat.label}<span class="cat-check">✓</span>`;
+    btn.onclick = () => selectCategory(cat.id);
+    grid.appendChild(btn);
   });
-  block.appendChild(grid);
-  results.appendChild(block);
-});
+  loadCategory(activeCat);
+}
+
+function selectCategory(id) {
+  activeCat = CATEGORIES.find(c => c.id === id);
+  document.querySelectorAll('.cat-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.id === id);
+  });
+  loadCategory(activeCat);
+  // Reset build state
+  document.getElementById('progressSection').style.display = 'none';
+  document.getElementById('doneSection').style.display = 'none';
+  document.getElementById('buildBtn').disabled = false;
+}
+
+function loadCategory(cat) {
+  items = cat.items.map(i => ({...i}));
+  document.getElementById('itemHint').textContent = cat.hint;
+  document.getElementById('gameTitle').value = cat.label + ' Bingo!';
+  renderItems();
+}
+
+// ─────────────────────────────────────────────
+// ITEM EDITOR
+// ─────────────────────────────────────────────
+function renderItems() {
+  const list = document.getElementById('itemList');
+  list.innerHTML = '';
+  items.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    const isFavicon = activeCat.type === 'favicon';
+    row.innerHTML = `
+      <input class="item-emoji-input" type="text" value="${item.value}"
+        placeholder="${isFavicon ? '🌐' : '😀'}"
+        oninput="items[${i}].value=this.value;updateCount()"
+        title="${isFavicon ? 'Website domain (e.g. toyota.com)' : 'Emoji'}">
+      <input class="item-name-input" type="text" value="${item.label}"
+        placeholder="Name"
+        oninput="items[${i}].label=this.value;updateCount()">
+      <button class="del-btn" onclick="deleteItem(${i})" title="Remove">✕</button>
+    `;
+    list.appendChild(row);
+  });
+  updateCount();
+}
+
+function addItem() {
+  items.push({ label: 'New Item', value: activeCat.type === 'favicon' ? 'example.com' : '⭐' });
+  renderItems();
+  // Scroll to bottom of list & focus new name
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.item-name-input');
+    const last = inputs[inputs.length - 1];
+    if (last) { last.focus(); last.select(); }
+  }, 50);
+}
+
+function deleteItem(i) {
+  items.splice(i, 1);
+  renderItems();
+}
+
+function updateCount() {
+  const badge = document.getElementById('countBadge');
+  const n = items.length;
+  badge.textContent = n + ' item' + (n !== 1 ? 's' : '');
+  badge.className = 'count-badge' + (n < 24 ? ' warn' : '');
+}
+
+// ─────────────────────────────────────────────
+// BUILD GAME
+// ─────────────────────────────────────────────
+async function buildGame() {
+  if (items.length < 24) {
+    alert(`You need at least 24 items to fill a bingo board. You have ${items.length} — please add ${24 - items.length} more!`);
+    return;
+  }
+
+  const btn = document.getElementById('buildBtn');
+  btn.disabled = true;
+  document.getElementById('progressSection').style.display = 'block';
+  document.getElementById('doneSection').style.display = 'none';
+
+  const title = document.getElementById('gameTitle').value || 'Road Trip Bingo!';
+  const freeLabel = document.getElementById('freeLabel').value || 'FREE!';
+  const catType = activeCat.type;
+  const bg = activeCat.bg;
+
+  // Fetch images if favicon category; emoji categories need no fetching
+  const resolved = []; // [{label, img}] img = data URL or emoji string
+  const total = items.length;
+
+  for (let i = 0; i < total; i++) {
+    const item = items[i];
+    setProgress(i, total, catType === 'favicon' ? `Fetching ${item.label}…` : `Preparing ${item.label}…`);
+    if (catType === 'favicon') {
+      const dataUrl = await fetchFavicon(item.value);
+      resolved.push({ label: item.label, img: dataUrl, imgType: 'img' });
+    } else {
+      resolved.push({ label: item.label, img: item.value, imgType: 'emoji' });
+    }
+  }
+
+  setProgress(total, total, 'Building game file…');
+  const html = generateGameHTML(title, freeLabel, bg, resolved);
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const safeName = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '.html';
+  document.getElementById('dlLink').href = url;
+  document.getElementById('dlLink').download = safeName;
+  document.getElementById('doneSection').style.display = 'block';
+  document.getElementById('progStatus').textContent = '✅ Done!';
+}
+
+function setProgress(done, total, msg) {
+  document.getElementById('barFill').style.width = `${Math.round((done / total) * 100)}%`;
+  document.getElementById('progStatus').textContent = msg;
+}
+
+async function fetchFavicon(domain) {
+  try {
+    const url = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
+    const resp = await fetch(url);
+    if (!resp.ok) return null;
+    const blob = await resp.blob();
+    return await blobToDataUrl(blob);
+  } catch { return null; }
+}
+
+function blobToDataUrl(blob) {
+  return new Promise(res => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = () => res(null);
+    r.readAsDataURL(blob);
+  });
+}
+
+// ─────────────────────────────────────────────
+// GAME HTML GENERATOR
+// ─────────────────────────────────────────────
+const BG_THEMES = {
+  road:    { body: 'linear-gradient(180deg,#BAE6FD 0%,#E0F2FE 38%,#BBF7D0 100%)', accent: '#F97316', title: '#1E293B', tshadow: '3px 3px 0 #FCD34D,5px 5px 0 #F87171' },
+  city:    { body: 'linear-gradient(180deg,#E0E7FF 0%,#EEF2FF 40%,#F0FDF4 100%)', accent: '#6366F1', title: '#1E1B4B', tshadow: '3px 3px 0 #A5B4FC,5px 5px 0 #818CF8' },
+  safari:  { body: 'linear-gradient(180deg,#FEF9C3 0%,#FEF3C7 40%,#D9F99D 100%)', accent: '#D97706', title: '#78350F', tshadow: '3px 3px 0 #FDE68A,5px 5px 0 #F59E0B' },
+  rainbow: { body: 'linear-gradient(135deg,#FEE2E2,#FEF9C3,#DCFCE7,#DBEAFE,#F3E8FF)', accent: '#EC4899', title: '#1E293B', tshadow: '3px 3px 0 #FCA5A5,5px 5px 0 #F472B6' },
+  sky:     { body: 'linear-gradient(180deg,#BAE6FD 0%,#E0F2FE 60%,#BFDBFE 100%)', accent: '#0EA5E9', title: '#0C4A6E', tshadow: '3px 3px 0 #7DD3FC,5px 5px 0 #38BDF8' },
+};
+
+function generateGameHTML(title, freeLabel, bgKey, brandList) {
+  const theme = BG_THEMES[bgKey] || BG_THEMES.road;
+  const brandsJS = JSON.stringify(brandList);
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escHtml(title)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--accent:${theme.accent}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:${theme.body};font-family:'Nunito',sans-serif;color:#1E293B;overflow-x:hidden}
+.wrapper{max-width:600px;margin:0 auto;padding:18px 12px 60px}
+header{text-align:center;margin-bottom:14px}
+.title{font-family:'Fredoka One',cursive;font-size:clamp(1.8rem,7vw,2.8rem);color:${theme.title};letter-spacing:1px;text-shadow:${theme.tshadow};line-height:1.1}
+.subtitle{font-size:.95rem;font-weight:800;color:var(--accent);margin-top:4px;opacity:.8}
+.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.btn{font-family:'Fredoka One',cursive;font-size:1rem;padding:8px 20px;border-radius:50px;border:none;cursor:pointer;transition:transform .12s,box-shadow .12s;box-shadow:0 4px 0 rgba(0,0,0,.18);letter-spacing:.5px}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.btn-shuffle{background:var(--accent);color:white}
+.btn-reset{background:#6366F1;color:white}
+.btn-print{background:#0EA5E9;color:white}
+.win-banner{display:none;background:linear-gradient(135deg,#FDE68A,#FCD34D);border:4px solid #F59E0B;border-radius:20px;padding:14px 20px;text-align:center;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.win-banner.show{display:block}
+.win-banner p{font-family:'Fredoka One',cursive;font-size:1.5rem;color:#92400E}
+.score-bar{display:flex;justify-content:center;margin-bottom:10px;font-weight:800;font-size:.9rem;color:#0369A1}
+.score-bar span{background:white;border-radius:50px;padding:4px 14px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.col-labels{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:4px;padding:0 10px}
+.col-label{font-family:'Fredoka One',cursive;font-size:clamp(.9rem,3.5vw,1.3rem);text-align:center;border-radius:8px;padding:4px 0}
+.col-label:nth-child(1){color:#EF4444;background:#FEE2E2}
+.col-label:nth-child(2){color:#F97316;background:#FFF7ED}
+.col-label:nth-child(3){color:#16A34A;background:#F0FDF4}
+.col-label:nth-child(4){color:#2563EB;background:#EFF6FF}
+.col-label:nth-child(5){color:#9333EA;background:#FAF5FF}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;background:white;border-radius:24px;padding:10px;box-shadow:0 8px 32px rgba(30,41,59,.14),0 2px 0 #CBD5E1;border:3px solid #E2E8F0}
+.cell{aspect-ratio:1;border-radius:12px;background:linear-gradient(135deg,#F8FAFF,#EFF6FF);border:2.5px solid #BAE6FD;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s,border-color .15s,box-shadow .15s;user-select:none;-webkit-tap-highlight-color:transparent;padding:4px 3px 3px}
+.cell:hover{transform:scale(1.05);border-color:#38BDF8;box-shadow:0 4px 12px rgba(56,189,248,.25)}
+.cell:active{transform:scale(.96)}
+.logo-wrap{width:68%;flex-shrink:0;aspect-ratio:1;background:white;border-radius:10px;padding:10%;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 5px rgba(0,0,0,.1)}
+.logo-wrap img{width:100%;height:100%;object-fit:contain;display:block}
+.logo-wrap .emoji-icon{font-size:clamp(1.4rem,5vw,2.2rem);line-height:1}
+.brand-name{font-family:'Fredoka One',cursive;font-size:clamp(.44rem,1.8vw,.72rem);color:#1E3A5F;text-align:center;line-height:1.2;margin-top:3px}
+.cell.free-cell{background:linear-gradient(135deg,#FEF9C3,#FDE68A);border-color:#FCD34D;cursor:default}
+.cell.free-cell .brand-name{color:#92400E}
+.cell.free-cell:hover{transform:none;box-shadow:none}
+.cell.stamped{background:linear-gradient(135deg,#FFF1F2,#FFE4E6);border-color:#FCA5A5}
+.cell.stamped .logo-wrap{opacity:.35}
+.stamp-mark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.stamp-ring{width:76%;height:76%;border-radius:50%;border:4px solid #DC2626;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.4) rotate(-20deg)}
+.cell.stamped .stamp-ring{opacity:.92;animation:stamp-appear .3s cubic-bezier(.175,.885,.32,1.275) forwards}
+.stamp-ring-inner{font-family:'Fredoka One',cursive;font-size:clamp(.7rem,2.8vw,1rem);color:#DC2626}
+@keyframes stamp-appear{from{opacity:0;transform:scale(.4) rotate(-20deg)}to{opacity:.92;transform:scale(1) rotate(-8deg)}}
+.cell.bingo-flash{animation:bingo-glow .7s ease-in-out 3}
+@keyframes bingo-glow{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 4px #FCD34D,0 0 0 8px #F97316}}
+.confetti-piece{position:fixed;top:-10px;border-radius:2px;animation:confetti-fall linear forwards;z-index:200;pointer-events:none}
+@keyframes confetti-fall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@media print{
+  body{background:white!important}
+  .controls,.score-bar,.win-banner,.stamp-mark,.confetti-piece{display:none!important}
+  .wrapper{padding:0;max-width:100%}
+  header{margin-bottom:8px}
+  .title{font-size:24pt;text-shadow:none}
+  .col-labels{padding:0 4px;gap:3px;margin-bottom:3px}
+  .col-label{font-size:13pt;padding:2px 0}
+  .board{gap:3px;padding:5px;border:2px solid #CBD5E1;border-radius:10px;box-shadow:none;page-break-inside:avoid}
+  .cell{border-radius:7px;border:2px solid #BAE6FD}
+  .cell:hover{transform:none;box-shadow:none}
+  .cell.free-cell{background:#FEF9C3!important}
+  .logo-wrap{box-shadow:none;border-radius:6px}
+  .brand-name{font-size:6.5pt;margin-top:2px}
+  .cell.stamped{background:white!important;border-color:#BAE6FD!important}
+  .cell.stamped .logo-wrap{opacity:1!important}
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <div class="title">${escHtml(title)}</div>
+    <div class="subtitle">Spot it, stamp it, BINGO!</div>
+  </header>
+  <div class="controls">
+    <button class="btn btn-shuffle" onclick="shuffleBoard()">🔀 New Board</button>
+    <button class="btn btn-reset" onclick="resetStamps()">🔄 Clear Stamps</button>
+    <button class="btn btn-print" onclick="window.print()">🖨️ Print Board</button>
+  </div>
+  <div class="win-banner" id="winBanner"><p>🎉 BINGO! You win! 🎉</p></div>
+  <div class="score-bar"><span id="scoreLabel">0 / 24 found</span></div>
+  <div class="col-labels">
+    <div class="col-label">B</div><div class="col-label">I</div>
+    <div class="col-label">N</div><div class="col-label">G</div><div class="col-label">O</div>
+  </div>
+  <div class="board" id="board"></div>
+</div>
+<script>
+const FREE_LABEL = ${JSON.stringify(freeLabel)};
+const allBrands = ${brandsJS};
+let board=[],stamped=new Set();
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function shuffleBoard(){
+  stamped=new Set([12]);
+  const pool=shuffle(allBrands).slice(0,24);
+  board=[...pool.slice(0,12),null,...pool.slice(12,24)];
+  document.getElementById('winBanner').classList.remove('show');
+  renderBoard();updateScore();
+}
+function renderBoard(){
+  const el=document.getElementById('board');
+  el.innerHTML='';
+  board.forEach((b,i)=>{
+    const cell=document.createElement('div');
+    cell.className='cell'+(i===12?' free-cell':'')+(stamped.has(i)?' stamped':'');
+    cell.dataset.index=i;
+    if(i===12){
+      cell.innerHTML='<div class="logo-wrap" style="background:rgba(254,249,195,.5);box-shadow:none"><span class="emoji-icon">⭐</span></div><div class="brand-name" style="color:#92400E">'+FREE_LABEL+'</div>';
+    } else {
+      const logoHtml = b.imgType==='emoji'
+        ? '<span class="emoji-icon">'+b.img+'</span>'
+        : (b.img ? '<img src="'+b.img+'" alt="'+escHtml2(b.label)+'">' : '<span class="emoji-icon">🚗</span>');
+      cell.innerHTML='<div class="logo-wrap">'+logoHtml+'</div><div class="brand-name">'+escHtml2(b.label)+'</div>'+(stamped.has(i)?'<div class="stamp-mark"><div class="stamp-ring"><span class="stamp-ring-inner">✓</span></div></div>':'');
+      cell.addEventListener('click',()=>toggleStamp(i));
+    }
+    el.appendChild(cell);
+  });
+}
+function escHtml2(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function toggleStamp(i){if(i===12)return;stamped.has(i)?stamped.delete(i):stamped.add(i);renderBoard();updateScore();checkWin();}
+function resetStamps(){stamped=new Set([12]);document.getElementById('winBanner').classList.remove('show');renderBoard();updateScore();}
+function updateScore(){document.getElementById('scoreLabel').textContent=(stamped.size-1)+' / 24 found';}
+function checkWin(){
+  const lines=[[0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],[0,5,10,15,20],[1,6,11,16,21],[2,7,12,17,22],[3,8,13,18,23],[4,9,14,19,24],[0,6,12,18,24],[4,8,12,16,20]];
+  let won=false;
+  lines.forEach(line=>{if(line.every(i=>stamped.has(i))){won=true;line.forEach(i=>{const e=document.querySelector('.cell[data-index="'+i+'"]');if(e){e.classList.remove('bingo-flash');void e.offsetWidth;e.classList.add('bingo-flash');}});}});
+  if(won){document.getElementById('winBanner').classList.add('show');confetti();}
+}
+function confetti(){const c=['#F87171','#FCD34D','#4ADE80','#60A5FA','#C084FC','#FB923C'];for(let i=0;i<60;i++){const e=document.createElement('div');e.className='confetti-piece';e.style.left=Math.random()*100+'vw';e.style.background=c[Math.floor(Math.random()*c.length)];const s=(6+Math.random()*10)+'px';e.style.width=s;e.style.height=s;e.style.animationDuration=(1.5+Math.random()*2)+'s';e.style.animationDelay=(Math.random()*1.2)+'s';e.style.borderRadius=Math.random()>.5?'50%':'2px';document.body.appendChild(e);e.addEventListener('animationend',()=>e.remove());}}
+shuffleBoard();
+<\/script>
+</body>
+</html>`;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+init();
 </script>
 </body>
 </html>
